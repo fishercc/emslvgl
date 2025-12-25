@@ -1,0 +1,2 @@
+- This tool merges eez-framework into single .cpp and .h file, plus libs folder for third party libraries
+- Execute with `npm start` from this directory of studio and the results will be written to the `resources/eez-framework-amalgamation` folder

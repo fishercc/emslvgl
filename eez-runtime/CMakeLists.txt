@@ -42,9 +42,9 @@ target_link_libraries(eez_runtime
 add_custom_command(TARGET eez_runtime POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     "${PROJECT_SOURCE_DIR}/build/eez_runtime.js"
-    "${PROJECT_SOURCE_DIR}/../release")
+    "${PROJECT_SOURCE_DIR}/../release/wasm")
 
 add_custom_command(TARGET eez_runtime POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     "${PROJECT_SOURCE_DIR}/build/eez_runtime.wasm"
-    "${PROJECT_SOURCE_DIR}/../release")
+    "${PROJECT_SOURCE_DIR}/../release/wasm")

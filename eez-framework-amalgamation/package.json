@@ -1,0 +1,16 @@
+{
+  "name": "eez-framework-amalgamation",
+  "version": "1.0.0",
+  "description": "This tool merges eez-framework into single .cpp and .h file, plus libs folder for third party libraries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && cd build && node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^25.0.3"
+  }
+}

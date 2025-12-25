@@ -49,9 +49,9 @@ target_link_libraries(lvgl_runtime_v9.3.0
 add_custom_command(TARGET lvgl_runtime_v9.3.0 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.3.0.js"
-    "${PROJECT_SOURCE_DIR}/../../release")
+    "${PROJECT_SOURCE_DIR}/../../release/wasm")
 
 add_custom_command(TARGET lvgl_runtime_v9.3.0 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.3.0.wasm"
-    "${PROJECT_SOURCE_DIR}/../../release")
+    "${PROJECT_SOURCE_DIR}/../../release/wasm")
