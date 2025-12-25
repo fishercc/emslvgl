@@ -6,4 +6,10 @@ This folder contains C++ projects that are build using Emscripten to create WASM
 
 How to add submodules?
 
-- git submodule add https://github.com/eez-open/eez-framework eez-framework
+- EEZ-Framework
+    - We always use master commit.
+    - git submodule add https://github.com/eez-open/eez-framework eez-framework
+
+- LVGL
+    - git submodule add https://github.com/lvgl/lvgl lvgl-runtime/v8.4.0/lvgl
+    - Then checkout desired commit

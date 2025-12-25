@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(lvgl_runtime_v9.0)
+project(lvgl_runtime_v9.2.2)
 
 get_filename_component(EXPORTED_FUNCTIONS_FILE_PATH exported-functions.txt ABSOLUTE)
 
@@ -35,33 +35,23 @@ file(GLOB_RECURSE SOURCES
     ../common/src/*.c
 )
 
-#add_executable(lvgl_runtime_v9.0 ${SOURCES} ../stub_api.c)
-add_executable(lvgl_runtime_v9.0 ${SOURCES})
+#add_executable(lvgl_runtime_v9.2.2 ${SOURCES} ../stub_api.c)
+add_executable(lvgl_runtime_v9.2.2 ${SOURCES})
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-target_link_libraries(lvgl_runtime_v9.0
+target_link_libraries(lvgl_runtime_v9.2.2
     lvgl
     eez-framework
 )
 
 #
-add_custom_command(TARGET lvgl_runtime_v9.0 POST_BUILD
+add_custom_command(TARGET lvgl_runtime_v9.2.2 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.0.js"
-    "${PROJECT_SOURCE_DIR}/../../../packages/project-editor/flow/runtime")
+    "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.2.2.js"
+    "${PROJECT_SOURCE_DIR}/../../release")
 
-add_custom_command(TARGET lvgl_runtime_v9.0 POST_BUILD
+add_custom_command(TARGET lvgl_runtime_v9.2.2 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.0.js"
-    "${PROJECT_SOURCE_DIR}/../../../build/project-editor/flow/runtime")
-
-add_custom_command(TARGET lvgl_runtime_v9.0 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.0.wasm"
-    "${PROJECT_SOURCE_DIR}/../../../packages/project-editor/flow/runtime")
-
-add_custom_command(TARGET lvgl_runtime_v9.0 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.0.wasm"
-    "${PROJECT_SOURCE_DIR}/../../../build/project-editor/flow/runtime")
+    "${PROJECT_SOURCE_DIR}/build/lvgl_runtime_v9.2.2.wasm"
+    "${PROJECT_SOURCE_DIR}/../../release")
