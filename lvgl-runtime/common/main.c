@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
@@ -354,13 +355,6 @@ bool initialized = false;
 static uint32_t g_prevTick;
 #endif
 
-#define DUMP_WIDGETS 0
-
-#if DUMP_WIDGETS
-static void dump_widgets_flags_info();
-static void dump_custom_styles();
-#endif
-
 EM_PORT_API(void) init(uint32_t wasmModuleId, uint32_t debuggerMessageSubsciptionFilter, uint8_t *assets, uint32_t assetsSize, uint32_t displayWidth, uint32_t displayHeight, bool darkTheme, uint32_t timeZone, bool screensLifetimeSupport) {
     is_editor = assetsSize == 0;
 
@@ -377,10 +371,6 @@ EM_PORT_API(void) init(uint32_t wasmModuleId, uint32_t debuggerMessageSubsciptio
     lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), darkTheme, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
 
-#if DUMP_WIDGETS
-    dump_widgets_flags_info();
-#endif
-
     if (!is_editor) {
         flowInit(wasmModuleId, debuggerMessageSubsciptionFilter, assets, assetsSize, darkTheme, timeZone, screensLifetimeSupport);
     }
@@ -390,10 +380,6 @@ EM_PORT_API(void) init(uint32_t wasmModuleId, uint32_t debuggerMessageSubsciptio
 #endif
 
     initialized = true;
-
-#if DUMP_WIDGETS
-    dump_custom_styles();
-#endif
 }
 
 EM_PORT_API(bool) mainLoop() {
@@ -453,7 +439,50 @@ EM_PORT_API(void) onKeyPressed(uint32_t key) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if DUMP_WIDGETS
+#define SYMBOLS_STRING_INIT_ALLOCATED 1024 * 1024
+
+typedef struct SymbolsString {
+    char *ptr;
+    unsigned size;
+    unsigned allocated;
+} SymbolsString;
+
+static SymbolsString g_symbolsString;
+
+void symbols_append(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int needed = vsnprintf(NULL, 0, format, args_copy);
+    va_end(args_copy);
+
+    if (needed < 0) {
+        va_end(args);
+        return; // encoding error
+    }
+
+    unsigned total_needed = g_symbolsString.size + needed + 1;
+
+    // Ensure we have enough space
+    assert(total_needed <= g_symbolsString.allocated);
+
+    // Now actually write the formatted string at the end of the buffer
+    int written = vsnprintf(g_symbolsString.ptr + g_symbolsString.size, 
+                            g_symbolsString.allocated - g_symbolsString.size, 
+                            format, args);
+
+    va_end(args);
+
+    if (written < 0 || written > needed) {
+        // Something went wrong (shouldn't happen with proper vsnprintf)
+        return;
+    }
+
+    g_symbolsString.size += written;
+    // symstr->ptr is always null-terminated by vsnprintf
+}
 
 lv_obj_t *lv_spinner_create_adapt(lv_obj_t *parentObj) {
 #if LVGL_VERSION_MAJOR >= 9
@@ -518,6 +547,7 @@ WidgetInfo widgets[] = {
     { "Meter", lv_meter_create },
 #endif
     { "QRCode", lv_qrcode_create_adapt },
+    { "Spinbox", lv_spinbox_create },
 };
 
 typedef struct {
@@ -550,11 +580,10 @@ FlagInfo flags[] = {
 };
 
 
-void dump_widget_flags_info(WidgetInfo *info, lv_obj_t *obj) {
-    char info_str[1024] = { 0 };
-
-    strcat(info_str, info->name);
-    strcat(info_str, ": ");
+void dump_widget_flags_info(WidgetInfo *info, lv_obj_t *obj, bool last) {
+    symbols_append("\"");
+    symbols_append(info->name);
+    symbols_append("\": \"");
 
     bool first = true;
 
@@ -563,13 +592,16 @@ void dump_widget_flags_info(WidgetInfo *info, lv_obj_t *obj) {
             if (first) {
                 first = false;
             } else {
-                strcat(info_str, " | ");
+                symbols_append(" | ");
             }
-            strcat(info_str, flags[i].name);
+            symbols_append(flags[i].name);
         }
     }
 
-    printf("%s\n", info_str);
+    symbols_append("\"");
+    if (!last) {
+        symbols_append(",");
+    }
 }
 
 void dump_widgets_flags_info() {
@@ -580,29 +612,291 @@ void dump_widgets_flags_info() {
         if (!parent_obj) {
             parent_obj = obj;
         }
-        dump_widget_flags_info(widgets + i, obj);
+        dump_widget_flags_info(widgets + i, obj, i == sizeof(widgets) / sizeof(WidgetInfo) - 1);
     }
 
     lv_obj_del(parent_obj);
 }
 
-void dump_custom_styles() {
-    printf("LV_STYLE_FLEX_FLOW %d\n", LV_STYLE_FLEX_FLOW);
-    printf("LV_STYLE_FLEX_MAIN_PLACE %d\n", LV_STYLE_FLEX_MAIN_PLACE);
-    printf("LV_STYLE_FLEX_CROSS_PLACE %d\n", LV_STYLE_FLEX_CROSS_PLACE);
-    printf("LV_STYLE_FLEX_TRACK_PLACE %d\n", LV_STYLE_FLEX_TRACK_PLACE);
-    printf("LV_STYLE_FLEX_GROW %d\n", LV_STYLE_FLEX_GROW);
-
-    printf("LV_STYLE_GRID_COLUMN_ALIGN %d\n", LV_STYLE_GRID_COLUMN_ALIGN);
-    printf("LV_STYLE_GRID_ROW_ALIGN %d\n", LV_STYLE_GRID_ROW_ALIGN);
-    printf("LV_STYLE_GRID_ROW_DSC_ARRAY %d\n", LV_STYLE_GRID_ROW_DSC_ARRAY);
-    printf("LV_STYLE_GRID_COLUMN_DSC_ARRAY %d\n", LV_STYLE_GRID_COLUMN_DSC_ARRAY);
-    printf("LV_STYLE_GRID_CELL_COLUMN_POS %d\n", LV_STYLE_GRID_CELL_COLUMN_POS);
-    printf("LV_STYLE_GRID_CELL_COLUMN_SPAN %d\n", LV_STYLE_GRID_CELL_COLUMN_SPAN);
-    printf("LV_STYLE_GRID_CELL_X_ALIGN %d\n", LV_STYLE_GRID_CELL_X_ALIGN);
-    printf("LV_STYLE_GRID_CELL_ROW_POS %d\n", LV_STYLE_GRID_CELL_ROW_POS);
-    printf("LV_STYLE_GRID_CELL_ROW_SPAN %d\n", LV_STYLE_GRID_CELL_ROW_SPAN);
-    printf("LV_STYLE_GRID_CELL_Y_ALIGN %d\n", LV_STYLE_GRID_CELL_Y_ALIGN);
+void style_append(const char *name, int code) {
+    symbols_append("{\"name\": \"%s\", \"code\": %d},", name, code);
 }
 
+void style_append_with_new_name(const char *name, int code, const char *new_name) {
+    symbols_append("{\"name\": \"%s\", \"code\": %d, \"new_name\": \"%s\"},", name, code, new_name);
+}
+
+void style_append_last(const char *name, int code) {
+    symbols_append("{\"name\": \"%s\", \"code\": %d}", name, code);
+}
+
+void style_append_undefined(const char *name) {
+    symbols_append("{\"name\": \"%s\", \"code\": null},", name);
+}
+
+void dump_custom_styles() {
+    /*Group 0*/
+    style_append("LV_STYLE_WIDTH", LV_STYLE_WIDTH); // { "8.3": 1, "9.0": 1 },
+    style_append("LV_STYLE_HEIGHT", LV_STYLE_HEIGHT); // "8.3": 4, "9.0": 2 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_LENGTH", LV_STYLE_LENGTH); // "8.3": undefined, "9.0": 3 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_LENGTH");
 #endif
+
+    style_append("LV_STYLE_MIN_WIDTH", LV_STYLE_MIN_WIDTH); // "8.3": 2, "9.0": 4 },
+    style_append("LV_STYLE_MAX_WIDTH", LV_STYLE_MAX_WIDTH); // "8.3": 3, "9.0": 5 },
+    style_append("LV_STYLE_MIN_HEIGHT", LV_STYLE_MIN_HEIGHT); // "8.3": 5, "9.0": 6 },
+    style_append("LV_STYLE_MAX_HEIGHT", LV_STYLE_MAX_HEIGHT); // "8.3": 6, "9.0": 7 },
+
+    style_append("LV_STYLE_X", LV_STYLE_X); // "8.3": 7, "9.0": 8 },
+    style_append("LV_STYLE_Y", LV_STYLE_Y); // "8.3": 8, "9.0": 9 },
+    style_append("LV_STYLE_ALIGN", LV_STYLE_ALIGN); // "8.3": 9, "9.0": 10 },
+
+    style_append("LV_STYLE_RADIUS", LV_STYLE_RADIUS); // "8.3": 11, "9.0": 12 },
+
+    /*Group 1*/
+    style_append("LV_STYLE_PAD_TOP", LV_STYLE_PAD_TOP); // "8.3": 16, "9.0": 16 },
+    style_append("LV_STYLE_PAD_BOTTOM", LV_STYLE_PAD_BOTTOM); // "8.3": 17, "9.0": 17 },
+    style_append("LV_STYLE_PAD_LEFT", LV_STYLE_PAD_LEFT); // "8.3": 18, "9.0": 18 },
+    style_append("LV_STYLE_PAD_RIGHT", LV_STYLE_PAD_RIGHT); // "8.3": 19, "9.0": 19 },
+
+    style_append("LV_STYLE_PAD_ROW", LV_STYLE_PAD_ROW); // "8.3": 20, "9.0": 20 },
+    style_append("LV_STYLE_PAD_COLUMN", LV_STYLE_PAD_COLUMN); // "8.3": 21, "9.0": 21 },
+    style_append("LV_STYLE_LAYOUT", LV_STYLE_LAYOUT); // "8.3": 10, "9.0": 22 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_MARGIN_TOP", LV_STYLE_MARGIN_TOP); // "8.3": undefined, "9.0": 24 }, // ONLY 9.0
+    style_append("LV_STYLE_MARGIN_BOTTOM", LV_STYLE_MARGIN_BOTTOM); // "8.3": undefined, "9.0": 25 }, // ONLY 9.0
+    style_append("LV_STYLE_MARGIN_LEFT", LV_STYLE_MARGIN_LEFT); // "8.3": undefined, "9.0": 26 }, // ONLY 9.0
+    style_append("LV_STYLE_MARGIN_RIGHT", LV_STYLE_MARGIN_RIGHT); // "8.3": undefined, "9.0": 27 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_MARGIN_TOP");
+    style_append_undefined("LV_STYLE_MARGIN_BOTTOM");
+    style_append_undefined("LV_STYLE_MARGIN_LEFT");
+    style_append_undefined("LV_STYLE_MARGIN_RIGHT");
+#endif
+
+    /*Group 2*/
+    style_append("LV_STYLE_BG_COLOR", LV_STYLE_BG_COLOR); // "8.3": 32, "9.0": 28 },
+    style_append("LV_STYLE_BG_OPA", LV_STYLE_BG_OPA); // "8.3": 33, "9.0": 29 },
+
+    style_append("LV_STYLE_BG_GRAD_DIR", LV_STYLE_BG_GRAD_DIR); // "8.3": 35, "9.0": 32 },
+    style_append("LV_STYLE_BG_MAIN_STOP", LV_STYLE_BG_MAIN_STOP); // "8.3": 36, "9.0": 33 },
+    style_append("LV_STYLE_BG_GRAD_STOP", LV_STYLE_BG_GRAD_STOP); // "8.3": 37, "9.0": 34 },
+    style_append("LV_STYLE_BG_GRAD_COLOR", LV_STYLE_BG_GRAD_COLOR); // "8.3": 34, "9.0": 35 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_BG_MAIN_OPA", LV_STYLE_BG_MAIN_OPA); // "8.3": undefined, "9.0": 36 }, // ONLY 9.0
+    style_append("LV_STYLE_BG_GRAD_OPA", LV_STYLE_BG_GRAD_OPA); // "8.3": undefined, "9.0": 37 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_BG_MAIN_OPA");
+    style_append_undefined("LV_STYLE_BG_GRAD_OPA");
+#endif
+
+    style_append("LV_STYLE_BG_GRAD", LV_STYLE_BG_GRAD); // "8.3": 38, "9.0": 38 },
+    style_append("LV_STYLE_BASE_DIR", LV_STYLE_BASE_DIR); // "8.3": 22, "9.0": 39 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_undefined("LV_STYLE_BG_DITHER_MODE");
+#else
+    style_append("LV_STYLE_BG_DITHER_MODE", LV_STYLE_BG_DITHER_MODE); // "8.3": 39, "9.0": undefined }, // ONLY 8.3
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_with_new_name("LV_STYLE_BG_IMG_SRC", LV_STYLE_BG_IMAGE_SRC, "LV_STYLE_BG_IMAGE_SRC"); // "8.3": 40, "9.0": 40 },
+    style_append_with_new_name("LV_STYLE_BG_IMG_OPA", LV_STYLE_BG_IMAGE_OPA, "LV_STYLE_BG_IMAGE_OPA"); // "8.3": 41, "9.0": 41 },
+    style_append_with_new_name("LV_STYLE_BG_IMG_RECOLOR", LV_STYLE_BG_IMAGE_RECOLOR, "LV_STYLE_BG_IMAGE_RECOLOR"); // "8.3": 42, "9.0": 42 },
+    style_append_with_new_name("LV_STYLE_BG_IMG_RECOLOR_OPA", LV_STYLE_BG_IMAGE_RECOLOR_OPA, "LV_STYLE_BG_IMAGE_RECOLOR_OPA"); // "8.3": 43, "9.0": 43 },
+#else
+    style_append("LV_STYLE_BG_IMG_SRC", LV_STYLE_BG_IMG_SRC); // "8.3": 40, "9.0": 40 },
+    style_append("LV_STYLE_BG_IMG_OPA", LV_STYLE_BG_IMG_OPA); // "8.3": 41, "9.0": 41 },
+    style_append("LV_STYLE_BG_IMG_RECOLOR", LV_STYLE_BG_IMG_RECOLOR); // "8.3": 42, "9.0": 42 },
+    style_append("LV_STYLE_BG_IMG_RECOLOR_OPA", LV_STYLE_BG_IMG_RECOLOR_OPA); // "8.3": 43, "9.0": 43 },
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_with_new_name("LV_STYLE_BG_IMG_TILED", LV_STYLE_BG_IMAGE_TILED, "LV_STYLE_BG_IMAGE_TILED"); // "8.3": 44, "9.0": 44 },
+#else
+    style_append("LV_STYLE_BG_IMG_TILED", LV_STYLE_BG_IMG_TILED); // "8.3": 44, "9.0": 44 },
+#endif
+
+    style_append("LV_STYLE_CLIP_CORNER", LV_STYLE_CLIP_CORNER); // "8.3": 23, "9.0": 45 },
+
+    /*Group 3*/
+    style_append("LV_STYLE_BORDER_WIDTH", LV_STYLE_BORDER_WIDTH); // "8.3": 50, "9.0": 48 },
+    style_append("LV_STYLE_BORDER_COLOR", LV_STYLE_BORDER_COLOR); // "8.3": 48, "9.0": 49 },
+    style_append("LV_STYLE_BORDER_OPA", LV_STYLE_BORDER_OPA); // "8.3": 49, "9.0": 50 },
+
+    style_append("LV_STYLE_BORDER_SIDE", LV_STYLE_BORDER_SIDE); // "8.3": 51, "9.0": 52 },
+    style_append("LV_STYLE_BORDER_POST", LV_STYLE_BORDER_POST); // "8.3": 52, "9.0": 53 },
+
+    style_append("LV_STYLE_OUTLINE_WIDTH", LV_STYLE_OUTLINE_WIDTH); // "8.3": 53, "9.0": 56 },
+    style_append("LV_STYLE_OUTLINE_COLOR", LV_STYLE_OUTLINE_COLOR); // "8.3": 54, "9.0": 57 },
+    style_append("LV_STYLE_OUTLINE_OPA", LV_STYLE_OUTLINE_OPA); // "8.3": 55, "9.0": 58 },
+    style_append("LV_STYLE_OUTLINE_PAD", LV_STYLE_OUTLINE_PAD); // "8.3": 56, "9.0": 59 },
+
+    /*Group 4*/
+    style_append("LV_STYLE_SHADOW_WIDTH", LV_STYLE_SHADOW_WIDTH); // "8.3": 64, "9.0": 60 },
+    style_append("LV_STYLE_SHADOW_COLOR", LV_STYLE_SHADOW_COLOR); // "8.3": 68, "9.0": 61 },
+    style_append("LV_STYLE_SHADOW_OPA", LV_STYLE_SHADOW_OPA); // "8.3": 69, "9.0": 62 },
+
+    style_append("LV_STYLE_SHADOW_OFS_X", LV_STYLE_SHADOW_OFS_X); // "8.3": 65, "9.0": 64 },
+    style_append("LV_STYLE_SHADOW_OFS_Y", LV_STYLE_SHADOW_OFS_Y); // "8.3": 66, "9.0": 65 },
+    style_append("LV_STYLE_SHADOW_SPREAD", LV_STYLE_SHADOW_SPREAD); // "8.3": 67, "9.0": 66 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_with_new_name("LV_STYLE_IMG_OPA", LV_STYLE_IMAGE_OPA, "LV_STYLE_IMAGE_OPA"); // "8.3": 70, "9.0": 68 },
+    style_append_with_new_name("LV_STYLE_IMG_RECOLOR", LV_STYLE_IMAGE_RECOLOR, "LV_STYLE_IMAGE_RECOLOR"); // "8.3": 71, "9.0": 69 },
+    style_append_with_new_name("LV_STYLE_IMG_RECOLOR_OPA", LV_STYLE_IMAGE_RECOLOR_OPA, "LV_STYLE_IMAGE_RECOLOR_OPA"); // "8.3": 72, "9.0": 70 },
+#else
+    style_append("LV_STYLE_IMG_OPA", LV_STYLE_IMG_OPA); // "8.3": 70, "9.0": 68 },
+    style_append("LV_STYLE_IMG_RECOLOR", LV_STYLE_IMG_RECOLOR); // "8.3": 71, "9.0": 69 },
+    style_append("LV_STYLE_IMG_RECOLOR_OPA", LV_STYLE_IMG_RECOLOR_OPA); // "8.3": 72, "9.0": 70 },
+#endif
+
+    style_append("LV_STYLE_LINE_WIDTH", LV_STYLE_LINE_WIDTH); // "8.3": 73, "9.0": 72 },
+    style_append("LV_STYLE_LINE_DASH_WIDTH", LV_STYLE_LINE_DASH_WIDTH); // "8.3": 74, "9.0": 73 },
+    style_append("LV_STYLE_LINE_DASH_GAP", LV_STYLE_LINE_DASH_GAP); // "8.3": 75, "9.0": 74 },
+    style_append("LV_STYLE_LINE_ROUNDED", LV_STYLE_LINE_ROUNDED); // "8.3": 76, "9.0": 75 },
+    style_append("LV_STYLE_LINE_COLOR", LV_STYLE_LINE_COLOR); // "8.3": 77, "9.0": 76 },
+    style_append("LV_STYLE_LINE_OPA", LV_STYLE_LINE_OPA); // "8.3": 78, "9.0": 77 },
+
+    /*Group 5*/
+    style_append("LV_STYLE_ARC_WIDTH", LV_STYLE_ARC_WIDTH); // "8.3": 80, "9.0": 80 },
+    style_append("LV_STYLE_ARC_ROUNDED", LV_STYLE_ARC_ROUNDED); // "8.3": 81, "9.0": 81 },
+    style_append("LV_STYLE_ARC_COLOR", LV_STYLE_ARC_COLOR); // "8.3": 82, "9.0": 82 },
+    style_append("LV_STYLE_ARC_OPA", LV_STYLE_ARC_OPA); // "8.3": 83, "9.0": 83 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_with_new_name("LV_STYLE_ARC_IMG_SRC", LV_STYLE_ARC_IMAGE_SRC, "LV_STYLE_ARC_IMAGE_SRC"); // "8.3": 84, "9.0": 84 },
+#else
+    style_append("LV_STYLE_ARC_IMG_SRC", LV_STYLE_ARC_IMG_SRC); // "8.3": 84, "9.0": 84 },
+#endif
+
+    style_append("LV_STYLE_TEXT_COLOR", LV_STYLE_TEXT_COLOR); // "8.3": 85, "9.0": 88 },
+    style_append("LV_STYLE_TEXT_OPA", LV_STYLE_TEXT_OPA); // "8.3": 86, "9.0": 89 },
+    style_append("LV_STYLE_TEXT_FONT", LV_STYLE_TEXT_FONT); // "8.3": 87, "9.0": 90 },
+
+    style_append("LV_STYLE_TEXT_LETTER_SPACE", LV_STYLE_TEXT_LETTER_SPACE); // "8.3": 88, "9.0": 91 },
+    style_append("LV_STYLE_TEXT_LINE_SPACE", LV_STYLE_TEXT_LINE_SPACE); // "8.3": 89, "9.0": 92 },
+    style_append("LV_STYLE_TEXT_DECOR", LV_STYLE_TEXT_DECOR); // "8.3": 90, "9.0": 93 },
+    style_append("LV_STYLE_TEXT_ALIGN", LV_STYLE_TEXT_ALIGN); // "8.3": 91, "9.0": 94 },
+
+    style_append("LV_STYLE_OPA", LV_STYLE_OPA); // "8.3": 96, "9.0": 95 },
+    style_append("LV_STYLE_OPA_LAYERED", LV_STYLE_OPA_LAYERED); // "8.3": 97, "9.0": 96 },
+    style_append("LV_STYLE_COLOR_FILTER_DSC", LV_STYLE_COLOR_FILTER_DSC); // "8.3": 98, "9.0": 97 },
+    style_append("LV_STYLE_COLOR_FILTER_OPA", LV_STYLE_COLOR_FILTER_OPA); // "8.3": 99, "9.0": 98 },
+
+    style_append("LV_STYLE_ANIM", LV_STYLE_ANIM); // "8.3": 100, "9.0": 99 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_undefined("LV_STYLE_ANIM_TIME");
+#else
+    style_append("LV_STYLE_ANIM_TIME", LV_STYLE_ANIM_TIME); // "8.3": 101, "9.0": undefined }, // ONLY 8.3
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_ANIM_DURATION", LV_STYLE_ANIM_DURATION); // "8.3": undefined, "9.0": 100 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_ANIM_DURATION");
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_undefined("LV_STYLE_ANIM_SPEED");
+#else
+    style_append("LV_STYLE_ANIM_SPEED", LV_STYLE_ANIM_SPEED); // "8.3": 102, "9.0": undefined }, // ONLY 8.3
+#endif
+
+    style_append("LV_STYLE_TRANSITION", LV_STYLE_TRANSITION); // "8.3": 103, "9.0": 102 },
+
+    style_append("LV_STYLE_BLEND_MODE", LV_STYLE_BLEND_MODE); // "8.3": 104, "9.0": 103 },
+    style_append("LV_STYLE_TRANSFORM_WIDTH", LV_STYLE_TRANSFORM_WIDTH); // "8.3": 105, "9.0": 104 },
+    style_append("LV_STYLE_TRANSFORM_HEIGHT", LV_STYLE_TRANSFORM_HEIGHT); // "8.3": 106, "9.0": 105 },
+    style_append("LV_STYLE_TRANSLATE_X", LV_STYLE_TRANSLATE_X); // "8.3": 107, "9.0": 106 },
+    style_append("LV_STYLE_TRANSLATE_Y", LV_STYLE_TRANSLATE_Y); // "8.3": 108, "9.0": 107 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_undefined("LV_STYLE_TRANSFORM_ZOOM");
+#else
+    style_append("LV_STYLE_TRANSFORM_ZOOM", LV_STYLE_TRANSFORM_ZOOM); // "8.3": 109, "9.0": undefined }, // ONLY 8.3
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_TRANSFORM_SCALE_X", LV_STYLE_TRANSFORM_SCALE_X); // "8.3": undefined, "9.0": 108 }, // ONLY 9.0
+    style_append("LV_STYLE_TRANSFORM_SCALE_Y", LV_STYLE_TRANSFORM_SCALE_Y); // "8.3": undefined, "9.0": 109 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_TRANSFORM_SCALE_X");
+    style_append_undefined("LV_STYLE_TRANSFORM_SCALE_Y");
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append_undefined("LV_STYLE_TRANSFORM_ANGLE");
+#else
+    style_append("LV_STYLE_TRANSFORM_ANGLE", LV_STYLE_TRANSFORM_ANGLE); // "8.3": 110, "9.0": undefined }, // ONLY 8.3
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_TRANSFORM_ROTATION", LV_STYLE_TRANSFORM_ROTATION); // "8.3": undefined, "9.0": 110 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_TRANSFORM_ROTATION");
+#endif
+
+    style_append("LV_STYLE_TRANSFORM_PIVOT_X", LV_STYLE_TRANSFORM_PIVOT_X); // "8.3": 111, "9.0": 111 },
+    style_append("LV_STYLE_TRANSFORM_PIVOT_Y", LV_STYLE_TRANSFORM_PIVOT_Y); // "8.3": 112, "9.0": 112 },
+
+#if LVGL_VERSION_MAJOR >= 9
+    style_append("LV_STYLE_TRANSFORM_SKEW_X", LV_STYLE_TRANSFORM_SKEW_X); // "8.3": undefined, "9.0": 113 }, // ONLY 9.0
+    style_append("LV_STYLE_TRANSFORM_SKEW_Y", LV_STYLE_TRANSFORM_SKEW_Y); // "8.3": undefined, "9.0": 114 }, // ONLY 9.0
+#else
+    style_append_undefined("LV_STYLE_TRANSFORM_SKEW_X");
+    style_append_undefined("LV_STYLE_TRANSFORM_SKEW_Y");
+#endif
+
+    style_append("LV_STYLE_FLEX_FLOW", LV_STYLE_FLEX_FLOW);
+    style_append("LV_STYLE_FLEX_MAIN_PLACE", LV_STYLE_FLEX_MAIN_PLACE);
+    style_append("LV_STYLE_FLEX_CROSS_PLACE", LV_STYLE_FLEX_CROSS_PLACE);
+    style_append("LV_STYLE_FLEX_TRACK_PLACE", LV_STYLE_FLEX_TRACK_PLACE);
+    style_append("LV_STYLE_FLEX_GROW", LV_STYLE_FLEX_GROW);
+
+    style_append("LV_STYLE_GRID_COLUMN_ALIGN", LV_STYLE_GRID_COLUMN_ALIGN);
+    style_append("LV_STYLE_GRID_ROW_ALIGN", LV_STYLE_GRID_ROW_ALIGN);
+    style_append("LV_STYLE_GRID_ROW_DSC_ARRAY", LV_STYLE_GRID_ROW_DSC_ARRAY);
+    style_append("LV_STYLE_GRID_COLUMN_DSC_ARRAY", LV_STYLE_GRID_COLUMN_DSC_ARRAY);
+    style_append("LV_STYLE_GRID_CELL_COLUMN_POS", LV_STYLE_GRID_CELL_COLUMN_POS);
+    style_append("LV_STYLE_GRID_CELL_COLUMN_SPAN", LV_STYLE_GRID_CELL_COLUMN_SPAN);
+    style_append("LV_STYLE_GRID_CELL_X_ALIGN", LV_STYLE_GRID_CELL_X_ALIGN);
+    style_append("LV_STYLE_GRID_CELL_ROW_POS", LV_STYLE_GRID_CELL_ROW_POS);
+    style_append("LV_STYLE_GRID_CELL_ROW_SPAN", LV_STYLE_GRID_CELL_ROW_SPAN);
+    style_append_last("LV_STYLE_GRID_CELL_Y_ALIGN", LV_STYLE_GRID_CELL_Y_ALIGN);
+}
+
+EM_PORT_API(const char *) getStudioSymbols() {
+    hor_res = 400;
+    ver_res = 400;
+    lv_init();
+    hal_init();
+
+    lv_disp_t *dispp = lv_disp_get_default();
+    lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
+    lv_disp_set_theme(dispp, theme);
+
+    g_symbolsString.ptr = (char *)malloc(SYMBOLS_STRING_INIT_ALLOCATED);
+    if (!g_symbolsString.ptr) {
+        return "memory allocation error";
+    }
+ 
+    g_symbolsString.allocated = SYMBOLS_STRING_INIT_ALLOCATED;
+    g_symbolsString.size = 0;
+ 
+    g_symbolsString.ptr[0] = 0;
+
+    symbols_append("{\"styles\":[");
+    dump_custom_styles();
+    symbols_append("],\"widget_flags\":{");
+    dump_widgets_flags_info();
+    symbols_append("}}");
+
+    return g_symbolsString.ptr;
+}

@@ -1,0 +1,487 @@
+{
+    "styles": [
+        {
+            "name": "LV_STYLE_WIDTH",
+            "code": 1
+        },
+        {
+            "name": "LV_STYLE_HEIGHT",
+            "code": 2
+        },
+        {
+            "name": "LV_STYLE_LENGTH",
+            "code": 3
+        },
+        {
+            "name": "LV_STYLE_MIN_WIDTH",
+            "code": 4
+        },
+        {
+            "name": "LV_STYLE_MAX_WIDTH",
+            "code": 5
+        },
+        {
+            "name": "LV_STYLE_MIN_HEIGHT",
+            "code": 6
+        },
+        {
+            "name": "LV_STYLE_MAX_HEIGHT",
+            "code": 7
+        },
+        {
+            "name": "LV_STYLE_X",
+            "code": 8
+        },
+        {
+            "name": "LV_STYLE_Y",
+            "code": 9
+        },
+        {
+            "name": "LV_STYLE_ALIGN",
+            "code": 10
+        },
+        {
+            "name": "LV_STYLE_RADIUS",
+            "code": 12
+        },
+        {
+            "name": "LV_STYLE_PAD_TOP",
+            "code": 16
+        },
+        {
+            "name": "LV_STYLE_PAD_BOTTOM",
+            "code": 17
+        },
+        {
+            "name": "LV_STYLE_PAD_LEFT",
+            "code": 18
+        },
+        {
+            "name": "LV_STYLE_PAD_RIGHT",
+            "code": 19
+        },
+        {
+            "name": "LV_STYLE_PAD_ROW",
+            "code": 20
+        },
+        {
+            "name": "LV_STYLE_PAD_COLUMN",
+            "code": 21
+        },
+        {
+            "name": "LV_STYLE_LAYOUT",
+            "code": 22
+        },
+        {
+            "name": "LV_STYLE_MARGIN_TOP",
+            "code": 24
+        },
+        {
+            "name": "LV_STYLE_MARGIN_BOTTOM",
+            "code": 25
+        },
+        {
+            "name": "LV_STYLE_MARGIN_LEFT",
+            "code": 26
+        },
+        {
+            "name": "LV_STYLE_MARGIN_RIGHT",
+            "code": 27
+        },
+        {
+            "name": "LV_STYLE_BG_COLOR",
+            "code": 28
+        },
+        {
+            "name": "LV_STYLE_BG_OPA",
+            "code": 29
+        },
+        {
+            "name": "LV_STYLE_BG_GRAD_DIR",
+            "code": 32
+        },
+        {
+            "name": "LV_STYLE_BG_MAIN_STOP",
+            "code": 33
+        },
+        {
+            "name": "LV_STYLE_BG_GRAD_STOP",
+            "code": 34
+        },
+        {
+            "name": "LV_STYLE_BG_GRAD_COLOR",
+            "code": 35
+        },
+        {
+            "name": "LV_STYLE_BG_MAIN_OPA",
+            "code": 36
+        },
+        {
+            "name": "LV_STYLE_BG_GRAD_OPA",
+            "code": 37
+        },
+        {
+            "name": "LV_STYLE_BG_GRAD",
+            "code": 38
+        },
+        {
+            "name": "LV_STYLE_BASE_DIR",
+            "code": 39
+        },
+        {
+            "name": "LV_STYLE_BG_DITHER_MODE",
+            "code": null
+        },
+        {
+            "name": "LV_STYLE_BG_IMG_SRC",
+            "code": 40,
+            "new_name": "LV_STYLE_BG_IMAGE_SRC"
+        },
+        {
+            "name": "LV_STYLE_BG_IMG_OPA",
+            "code": 41,
+            "new_name": "LV_STYLE_BG_IMAGE_OPA"
+        },
+        {
+            "name": "LV_STYLE_BG_IMG_RECOLOR",
+            "code": 42,
+            "new_name": "LV_STYLE_BG_IMAGE_RECOLOR"
+        },
+        {
+            "name": "LV_STYLE_BG_IMG_RECOLOR_OPA",
+            "code": 43,
+            "new_name": "LV_STYLE_BG_IMAGE_RECOLOR_OPA"
+        },
+        {
+            "name": "LV_STYLE_BG_IMG_TILED",
+            "code": 44,
+            "new_name": "LV_STYLE_BG_IMAGE_TILED"
+        },
+        {
+            "name": "LV_STYLE_CLIP_CORNER",
+            "code": 45
+        },
+        {
+            "name": "LV_STYLE_BORDER_WIDTH",
+            "code": 48
+        },
+        {
+            "name": "LV_STYLE_BORDER_COLOR",
+            "code": 49
+        },
+        {
+            "name": "LV_STYLE_BORDER_OPA",
+            "code": 50
+        },
+        {
+            "name": "LV_STYLE_BORDER_SIDE",
+            "code": 52
+        },
+        {
+            "name": "LV_STYLE_BORDER_POST",
+            "code": 53
+        },
+        {
+            "name": "LV_STYLE_OUTLINE_WIDTH",
+            "code": 56
+        },
+        {
+            "name": "LV_STYLE_OUTLINE_COLOR",
+            "code": 57
+        },
+        {
+            "name": "LV_STYLE_OUTLINE_OPA",
+            "code": 58
+        },
+        {
+            "name": "LV_STYLE_OUTLINE_PAD",
+            "code": 59
+        },
+        {
+            "name": "LV_STYLE_SHADOW_WIDTH",
+            "code": 60
+        },
+        {
+            "name": "LV_STYLE_SHADOW_COLOR",
+            "code": 61
+        },
+        {
+            "name": "LV_STYLE_SHADOW_OPA",
+            "code": 62
+        },
+        {
+            "name": "LV_STYLE_SHADOW_OFS_X",
+            "code": 64
+        },
+        {
+            "name": "LV_STYLE_SHADOW_OFS_Y",
+            "code": 65
+        },
+        {
+            "name": "LV_STYLE_SHADOW_SPREAD",
+            "code": 66
+        },
+        {
+            "name": "LV_STYLE_IMG_OPA",
+            "code": 68,
+            "new_name": "LV_STYLE_IMAGE_OPA"
+        },
+        {
+            "name": "LV_STYLE_IMG_RECOLOR",
+            "code": 69,
+            "new_name": "LV_STYLE_IMAGE_RECOLOR"
+        },
+        {
+            "name": "LV_STYLE_IMG_RECOLOR_OPA",
+            "code": 70,
+            "new_name": "LV_STYLE_IMAGE_RECOLOR_OPA"
+        },
+        {
+            "name": "LV_STYLE_LINE_WIDTH",
+            "code": 72
+        },
+        {
+            "name": "LV_STYLE_LINE_DASH_WIDTH",
+            "code": 73
+        },
+        {
+            "name": "LV_STYLE_LINE_DASH_GAP",
+            "code": 74
+        },
+        {
+            "name": "LV_STYLE_LINE_ROUNDED",
+            "code": 75
+        },
+        {
+            "name": "LV_STYLE_LINE_COLOR",
+            "code": 76
+        },
+        {
+            "name": "LV_STYLE_LINE_OPA",
+            "code": 77
+        },
+        {
+            "name": "LV_STYLE_ARC_WIDTH",
+            "code": 80
+        },
+        {
+            "name": "LV_STYLE_ARC_ROUNDED",
+            "code": 81
+        },
+        {
+            "name": "LV_STYLE_ARC_COLOR",
+            "code": 82
+        },
+        {
+            "name": "LV_STYLE_ARC_OPA",
+            "code": 83
+        },
+        {
+            "name": "LV_STYLE_ARC_IMG_SRC",
+            "code": 84,
+            "new_name": "LV_STYLE_ARC_IMAGE_SRC"
+        },
+        {
+            "name": "LV_STYLE_TEXT_COLOR",
+            "code": 88
+        },
+        {
+            "name": "LV_STYLE_TEXT_OPA",
+            "code": 89
+        },
+        {
+            "name": "LV_STYLE_TEXT_FONT",
+            "code": 90
+        },
+        {
+            "name": "LV_STYLE_TEXT_LETTER_SPACE",
+            "code": 91
+        },
+        {
+            "name": "LV_STYLE_TEXT_LINE_SPACE",
+            "code": 92
+        },
+        {
+            "name": "LV_STYLE_TEXT_DECOR",
+            "code": 93
+        },
+        {
+            "name": "LV_STYLE_TEXT_ALIGN",
+            "code": 94
+        },
+        {
+            "name": "LV_STYLE_OPA",
+            "code": 95
+        },
+        {
+            "name": "LV_STYLE_OPA_LAYERED",
+            "code": 96
+        },
+        {
+            "name": "LV_STYLE_COLOR_FILTER_DSC",
+            "code": 97
+        },
+        {
+            "name": "LV_STYLE_COLOR_FILTER_OPA",
+            "code": 98
+        },
+        {
+            "name": "LV_STYLE_ANIM",
+            "code": 99
+        },
+        {
+            "name": "LV_STYLE_ANIM_TIME",
+            "code": null
+        },
+        {
+            "name": "LV_STYLE_ANIM_DURATION",
+            "code": 100
+        },
+        {
+            "name": "LV_STYLE_ANIM_SPEED",
+            "code": null
+        },
+        {
+            "name": "LV_STYLE_TRANSITION",
+            "code": 102
+        },
+        {
+            "name": "LV_STYLE_BLEND_MODE",
+            "code": 103
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_WIDTH",
+            "code": 104
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_HEIGHT",
+            "code": 105
+        },
+        {
+            "name": "LV_STYLE_TRANSLATE_X",
+            "code": 106
+        },
+        {
+            "name": "LV_STYLE_TRANSLATE_Y",
+            "code": 107
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_ZOOM",
+            "code": null
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_SCALE_X",
+            "code": 108
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_SCALE_Y",
+            "code": 109
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_ANGLE",
+            "code": null
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_ROTATION",
+            "code": 110
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_PIVOT_X",
+            "code": 111
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_PIVOT_Y",
+            "code": 112
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_SKEW_X",
+            "code": 113
+        },
+        {
+            "name": "LV_STYLE_TRANSFORM_SKEW_Y",
+            "code": 114
+        },
+        {
+            "name": "LV_STYLE_FLEX_FLOW",
+            "code": 125
+        },
+        {
+            "name": "LV_STYLE_FLEX_MAIN_PLACE",
+            "code": 126
+        },
+        {
+            "name": "LV_STYLE_FLEX_CROSS_PLACE",
+            "code": 127
+        },
+        {
+            "name": "LV_STYLE_FLEX_TRACK_PLACE",
+            "code": 128
+        },
+        {
+            "name": "LV_STYLE_FLEX_GROW",
+            "code": 129
+        },
+        {
+            "name": "LV_STYLE_GRID_COLUMN_ALIGN",
+            "code": 130
+        },
+        {
+            "name": "LV_STYLE_GRID_ROW_ALIGN",
+            "code": 131
+        },
+        {
+            "name": "LV_STYLE_GRID_ROW_DSC_ARRAY",
+            "code": 132
+        },
+        {
+            "name": "LV_STYLE_GRID_COLUMN_DSC_ARRAY",
+            "code": 133
+        },
+        {
+            "name": "LV_STYLE_GRID_CELL_COLUMN_POS",
+            "code": 134
+        },
+        {
+            "name": "LV_STYLE_GRID_CELL_COLUMN_SPAN",
+            "code": 135
+        },
+        {
+            "name": "LV_STYLE_GRID_CELL_X_ALIGN",
+            "code": 136
+        },
+        {
+            "name": "LV_STYLE_GRID_CELL_ROW_POS",
+            "code": 137
+        },
+        {
+            "name": "LV_STYLE_GRID_CELL_ROW_SPAN",
+            "code": 138
+        },
+        {
+            "name": "LV_STYLE_GRID_CELL_Y_ALIGN",
+            "code": 139
+        }
+    ],
+    "widget_flags": {
+        "Screen": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_WITH_ARROW | SNAPPABLE",
+        "Label": "CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Button": "CLICKABLE | CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_ON_FOCUS | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Panel": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Image": "CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE | ADV_HITTEST",
+        "Slider": "CLICKABLE | CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_VER | SCROLL_ON_FOCUS | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Roller": "CLICKABLE | CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Switch": "CLICKABLE | CLICK_FOCUSABLE | CHECKABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_ON_FOCUS | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Bar": "CLICKABLE | CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Dropdown": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_ON_FOCUS | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Arc": "CLICKABLE | CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Spinner": "CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Checkbox": "CLICKABLE | CLICK_FOCUSABLE | CHECKABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_ON_FOCUS | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Textarea": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_ON_FOCUS | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Keyboard": "CLICKABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Chart": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Calendar": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "Scale": "CLICKABLE | CLICK_FOCUSABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE",
+        "QRCode": "CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_WITH_ARROW | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE | ADV_HITTEST",
+        "Spinbox": "CLICKABLE | CLICK_FOCUSABLE | SCROLLABLE | SCROLL_ELASTIC | SCROLL_MOMENTUM | SCROLL_CHAIN_HOR | SCROLL_CHAIN_VER | SCROLL_CHAIN | SCROLL_ON_FOCUS | SNAPPABLE | PRESS_LOCK | GESTURE_BUBBLE"
+    }
+}

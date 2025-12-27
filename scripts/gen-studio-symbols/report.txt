@@ -1,0 +1,16 @@
+Get vV840 symbols
+Get vV922 symbols
+Get vV930 symbols
+Get vV940 symbols
+warning: widget "Slider" different between version 8.4.0 and 9.2.2
+warning: widget "Slider" different between version 8.4.0 and 9.3.0
+warning: widget "Slider" different between version 8.4.0 and 9.4.0
+warning: widget "Checkbox" different between version 8.4.0 and 9.2.2
+warning: widget "Checkbox" different between version 8.4.0 and 9.3.0
+warning: widget "Checkbox" different between version 8.4.0 and 9.4.0
+warning: widget "Textarea" different between version 8.4.0 and 9.2.2
+warning: widget "Textarea" different between version 8.4.0 and 9.3.0
+warning: widget "Textarea" different between version 8.4.0 and 9.4.0
+warning: widget "Spinbox" different between version 8.4.0 and 9.2.2
+warning: widget "Spinbox" different between version 8.4.0 and 9.3.0
+warning: widget "Spinbox" different between version 8.4.0 and 9.4.0
