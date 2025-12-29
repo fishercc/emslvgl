@@ -514,7 +514,6 @@ lv_obj_t *lv_qrcode_create_adapt(lv_obj_t *parentObj) {
     return lv_qrcode_create(parentObj, 120, dark_color, light_color);
 #endif
 }
-
     
 typedef struct {
     const char *name;
@@ -578,7 +577,6 @@ FlagInfo flags[] = {
     { "FLOATING", LV_OBJ_FLAG_FLOATING },
     { "OVERFLOW_VISIBLE", LV_OBJ_FLAG_OVERFLOW_VISIBLE }
 };
-
 
 void dump_widget_flags_info(WidgetInfo *info, lv_obj_t *obj, bool last) {
     symbols_append("\"");
@@ -872,6 +870,466 @@ void dump_custom_styles() {
     style_append_last("LV_STYLE_GRID_CELL_Y_ALIGN", LV_STYLE_GRID_CELL_Y_ALIGN);
 }
 
+void dump_constant(const char *name, int value) {
+    symbols_append("\"%s\": %d,", name, value);
+}
+
+void dump_constant_last(const char *name, int value) {
+    symbols_append("\"%s\": %d", name, value);
+}
+
+int getNumShifts(int code) {
+    if (code == 1) return 0;
+    return 1 + getNumShifts(code >> 1);
+}
+
+void dump_flag(const char *name, int code, const char *description) {
+    symbols_append("\"%s\": {\"code\": \"1 << %d\", \"description\": \"%s\"},", name, getNumShifts(code), description);
+}
+
+void dump_constant_hex(const char *name, int value, int hex_digits) {
+    symbols_append("\"%s\": \"0x%0*x\",", name, hex_digits, value);
+}
+
+void dump_constant_undefined(const char *name) {
+    symbols_append("\"%s\": null,", name);
+}
+
+void dump_constants() {
+    dump_constant("LV_FLEX_FLOW_ROW", LV_FLEX_FLOW_ROW);
+    dump_constant("LV_FLEX_FLOW_COLUMN", LV_FLEX_FLOW_COLUMN);
+    dump_constant("LV_FLEX_FLOW_ROW_WRAP", LV_FLEX_FLOW_ROW_WRAP);
+    dump_constant("LV_FLEX_FLOW_ROW_REVERSE", LV_FLEX_FLOW_ROW_REVERSE);
+    dump_constant("LV_FLEX_FLOW_ROW_WRAP_REVERSE", LV_FLEX_FLOW_ROW_WRAP_REVERSE);
+    dump_constant("LV_FLEX_FLOW_COLUMN_WRAP", LV_FLEX_FLOW_COLUMN_WRAP);
+    dump_constant("LV_FLEX_FLOW_COLUMN_REVERSE", LV_FLEX_FLOW_COLUMN_REVERSE);
+    dump_constant("LV_FLEX_FLOW_COLUMN_WRAP_REVERSE", LV_FLEX_FLOW_COLUMN_WRAP_REVERSE);
+
+    dump_constant("LV_FLEX_ALIGN_START", LV_FLEX_ALIGN_START);
+    dump_constant("LV_FLEX_ALIGN_END", LV_FLEX_ALIGN_END);
+    dump_constant("LV_FLEX_ALIGN_CENTER", LV_FLEX_ALIGN_CENTER);
+    dump_constant("LV_FLEX_ALIGN_SPACE_EVENLY", LV_FLEX_ALIGN_SPACE_EVENLY);
+    dump_constant("LV_FLEX_ALIGN_SPACE_AROUND", LV_FLEX_ALIGN_SPACE_AROUND);
+    dump_constant("LV_FLEX_ALIGN_SPACE_BETWEEN", LV_FLEX_ALIGN_SPACE_BETWEEN);
+
+    dump_constant("LV_GRID_ALIGN_START", LV_GRID_ALIGN_START);
+    dump_constant("LV_GRID_ALIGN_CENTER", LV_GRID_ALIGN_CENTER);
+    dump_constant("LV_GRID_ALIGN_END", LV_GRID_ALIGN_END);
+    dump_constant("LV_GRID_ALIGN_STRETCH", LV_GRID_ALIGN_STRETCH);
+    dump_constant("LV_GRID_ALIGN_SPACE_EVENLY", LV_GRID_ALIGN_SPACE_EVENLY);
+    dump_constant("LV_GRID_ALIGN_SPACE_AROUND", LV_GRID_ALIGN_SPACE_AROUND);
+    dump_constant("LV_GRID_ALIGN_SPACE_BETWEEN", LV_GRID_ALIGN_SPACE_BETWEEN);
+
+    dump_constant("LV_SCROLLBAR_MODE_OFF", LV_SCROLLBAR_MODE_OFF);
+    dump_constant("LV_SCROLLBAR_MODE_ON", LV_SCROLLBAR_MODE_ON);
+    dump_constant("LV_SCROLLBAR_MODE_ACTIVE", LV_SCROLLBAR_MODE_ACTIVE);
+    dump_constant("LV_SCROLLBAR_MODE_AUTO", LV_SCROLLBAR_MODE_AUTO);
+
+    dump_constant("LV_DIR_NONE", LV_DIR_NONE);
+    dump_constant("LV_DIR_LEFT", LV_DIR_LEFT);
+    dump_constant("LV_DIR_RIGHT", LV_DIR_RIGHT);
+    dump_constant("LV_DIR_TOP", LV_DIR_TOP);
+    dump_constant("LV_DIR_BOTTOM", LV_DIR_BOTTOM);
+    dump_constant("LV_DIR_HOR", LV_DIR_HOR);
+    dump_constant("LV_DIR_VER", LV_DIR_VER);
+    dump_constant("LV_DIR_ALL", LV_DIR_ALL);
+
+    dump_constant("LV_KEY_UP", LV_KEY_UP);
+    dump_constant("LV_KEY_DOWN", LV_KEY_DOWN);
+    dump_constant("LV_KEY_RIGHT", LV_KEY_RIGHT);
+    dump_constant("LV_KEY_LEFT", LV_KEY_LEFT);
+    dump_constant("LV_KEY_ESC", LV_KEY_ESC);
+    dump_constant("LV_KEY_DEL", LV_KEY_DEL);
+    dump_constant("LV_KEY_BACKSPACE", LV_KEY_BACKSPACE);
+    dump_constant("LV_KEY_ENTER", LV_KEY_ENTER);
+    dump_constant("LV_KEY_NEXT", LV_KEY_NEXT);
+    dump_constant("LV_KEY_PREV", LV_KEY_PREV);
+    dump_constant("LV_KEY_HOME", LV_KEY_HOME);
+    dump_constant("LV_KEY_END", LV_KEY_END);
+    
+    dump_constant("LV_ANIM_OFF", LV_ANIM_OFF);
+    dump_constant("LV_ANIM_ON", LV_ANIM_ON);
+    dump_constant("LV_ANIM_REPEAT_INFINITE", LV_ANIM_REPEAT_INFINITE);
+
+    dump_constant("LV_SCROLL_SNAP_NONE", LV_SCROLL_SNAP_NONE);
+    dump_constant("LV_SCROLL_SNAP_START", LV_SCROLL_SNAP_START);
+    dump_constant("LV_SCROLL_SNAP_END", LV_SCROLL_SNAP_END);
+    dump_constant("LV_SCROLL_SNAP_CENTER", LV_SCROLL_SNAP_CENTER);
+    
+    dump_flag("HIDDEN", LV_OBJ_FLAG_HIDDEN, "Make the object hidden. (Like it wasn't there at all)");
+    dump_flag("CLICKABLE", LV_OBJ_FLAG_CLICKABLE, "Make the object clickable by the input devices");
+    dump_flag("CLICK_FOCUSABLE", LV_OBJ_FLAG_CLICK_FOCUSABLE, "Add focused state to the object when clicked");
+    dump_flag("CHECKABLE", LV_OBJ_FLAG_CHECKABLE, "Toggle checked state when the object is clicked");
+    dump_flag("SCROLLABLE", LV_OBJ_FLAG_SCROLLABLE, "Make the object scrollable");
+    dump_flag("SCROLL_ELASTIC", LV_OBJ_FLAG_SCROLL_ELASTIC, "Allow scrolling inside but with slower speed");
+    dump_flag("SCROLL_MOMENTUM", LV_OBJ_FLAG_SCROLL_MOMENTUM, "Make the object scroll further when \\\"thrown\\\"");
+    dump_flag("SCROLL_ONE", LV_OBJ_FLAG_SCROLL_ONE, "Allow scrolling only one snappable children");
+    dump_flag("SCROLL_CHAIN_HOR", LV_OBJ_FLAG_SCROLL_CHAIN_HOR, "Allow propagating the horizontal scroll to a parent");
+    dump_flag("SCROLL_CHAIN_VER", LV_OBJ_FLAG_SCROLL_CHAIN_VER, "Allow propagating the vertical scroll to a parent");
+    dump_flag("SCROLL_ON_FOCUS", LV_OBJ_FLAG_SCROLL_ON_FOCUS, "Automatically scroll object to make it visible when focused");
+    dump_flag("SCROLL_WITH_ARROW", LV_OBJ_FLAG_SCROLL_WITH_ARROW, "Allow scrolling the focused object with arrow keys");
+    dump_flag("SNAPPABLE", LV_OBJ_FLAG_SNAPPABLE, "If scroll snap is enabled on the parent it can snap to this object");
+    dump_flag("PRESS_LOCK", LV_OBJ_FLAG_PRESS_LOCK, "Keep the object pressed even if the press slid from the object");
+    dump_flag("EVENT_BUBBLE", LV_OBJ_FLAG_EVENT_BUBBLE, "Propagate the events to the parent too");
+    dump_flag("GESTURE_BUBBLE", LV_OBJ_FLAG_GESTURE_BUBBLE, "Propagate the gestures to the parent");
+    dump_flag("ADV_HITTEST", LV_OBJ_FLAG_ADV_HITTEST, "Allow performing more accurate hit (click) test. E.g. consider rounded corners.");
+    dump_flag("IGNORE_LAYOUT", LV_OBJ_FLAG_IGNORE_LAYOUT, "Make the object position-able by the layouts");
+    dump_flag("FLOATING", LV_OBJ_FLAG_FLOATING, "Do not scroll the object when the parent scrolls and ignore layout");
+    dump_flag("OVERFLOW_VISIBLE", LV_OBJ_FLAG_OVERFLOW_VISIBLE, "not clip the children's content to the parent's boundary*/");
+
+    dump_constant_hex("LV_STATE_DEFAULT", LV_STATE_DEFAULT, 4);
+    dump_constant_hex("LV_STATE_CHECKED", LV_STATE_CHECKED, 4);
+    dump_constant_hex("LV_STATE_FOCUSED", LV_STATE_FOCUSED, 4);
+    dump_constant_hex("LV_STATE_FOCUS_KEY", LV_STATE_FOCUS_KEY, 4);
+    dump_constant_hex("LV_STATE_EDITED", LV_STATE_EDITED, 4);
+    dump_constant_hex("LV_STATE_HOVERED", LV_STATE_HOVERED, 4);
+    dump_constant_hex("LV_STATE_PRESSED", LV_STATE_PRESSED, 4);
+    dump_constant_hex("LV_STATE_SCROLLED", LV_STATE_SCROLLED, 4);
+    dump_constant_hex("LV_STATE_DISABLED", LV_STATE_DISABLED, 4);
+    dump_constant_hex("LV_STATE_USER_1", LV_STATE_USER_1, 4);
+    dump_constant_hex("LV_STATE_USER_2", LV_STATE_USER_2, 4);
+    dump_constant_hex("LV_STATE_USER_3", LV_STATE_USER_3, 4);
+    dump_constant_hex("LV_STATE_USER_4", LV_STATE_USER_4, 4);
+    dump_constant_hex("LV_STATE_ANY", LV_STATE_ANY, 4);
+
+    dump_constant_hex("LV_PART_MAIN", LV_PART_MAIN, 6);
+    dump_constant_hex("LV_PART_SCROLLBAR", LV_PART_SCROLLBAR, 6);
+    dump_constant_hex("LV_PART_INDICATOR", LV_PART_INDICATOR, 6);
+    dump_constant_hex("LV_PART_KNOB", LV_PART_KNOB, 6);
+    dump_constant_hex("LV_PART_SELECTED", LV_PART_SELECTED, 6);
+    dump_constant_hex("LV_PART_ITEMS", LV_PART_ITEMS, 6);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant_undefined("LV_PART_TICKS");
+#else
+    dump_constant_hex("LV_PART_TICKS", LV_PART_TICKS, 6);
+#endif
+    dump_constant_hex("LV_PART_CURSOR", LV_PART_CURSOR, 6);
+    dump_constant_hex("LV_PART_CUSTOM_FIRST", LV_PART_CUSTOM_FIRST, 6);
+    dump_constant_hex("LV_PART_TEXTAREA_PLACEHOLDER", LV_PART_TEXTAREA_PLACEHOLDER, 6);
+    dump_constant_hex("LV_PART_ANY", LV_PART_ANY, 6);
+
+    dump_constant("LV_EVENT_PRESSED", LV_EVENT_PRESSED);
+    dump_constant("LV_EVENT_PRESSING", LV_EVENT_PRESSING);
+    dump_constant("LV_EVENT_PRESS_LOST", LV_EVENT_PRESS_LOST);
+    dump_constant("LV_EVENT_SHORT_CLICKED", LV_EVENT_SHORT_CLICKED);
+#if LVGL_VERSION_MAJOR >= 9 && LVGL_VERSION_MINOR >= 3
+    dump_constant("LV_EVENT_SINGLE_CLICKED", LV_EVENT_SINGLE_CLICKED);
+    dump_constant("LV_EVENT_DOUBLE_CLICKED", LV_EVENT_DOUBLE_CLICKED);
+    dump_constant("LV_EVENT_TRIPLE_CLICKED", LV_EVENT_TRIPLE_CLICKED);
+#else
+    dump_constant_undefined("LV_EVENT_SINGLE_CLICKED");
+    dump_constant_undefined("LV_EVENT_DOUBLE_CLICKED");
+    dump_constant_undefined("LV_EVENT_TRIPLE_CLICKED");
+#endif
+    dump_constant("LV_EVENT_LONG_PRESSED", LV_EVENT_LONG_PRESSED);
+    dump_constant("LV_EVENT_LONG_PRESSED_REPEAT", LV_EVENT_LONG_PRESSED_REPEAT);
+    dump_constant("LV_EVENT_CLICKED", LV_EVENT_CLICKED);
+    dump_constant("LV_EVENT_RELEASED", LV_EVENT_RELEASED);
+    dump_constant("LV_EVENT_SCROLL_BEGIN", LV_EVENT_SCROLL_BEGIN);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_EVENT_SCROLL_THROW_BEGIN", LV_EVENT_SCROLL_THROW_BEGIN);
+#else
+    dump_constant_undefined("LV_EVENT_SCROLL_THROW_BEGIN");
+#endif
+    dump_constant("LV_EVENT_SCROLL_END", LV_EVENT_SCROLL_END);
+    dump_constant("LV_EVENT_SCROLL", LV_EVENT_SCROLL);
+    dump_constant("LV_EVENT_GESTURE", LV_EVENT_GESTURE);
+    dump_constant("LV_EVENT_KEY", LV_EVENT_KEY);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_EVENT_ROTARY", LV_EVENT_ROTARY);
+#else
+    dump_constant_undefined("LV_EVENT_ROTARY");
+#endif
+    dump_constant("LV_EVENT_FOCUSED", LV_EVENT_FOCUSED);
+    dump_constant("LV_EVENT_DEFOCUSED", LV_EVENT_DEFOCUSED);
+    dump_constant("LV_EVENT_LEAVE", LV_EVENT_LEAVE);
+    dump_constant("LV_EVENT_HIT_TEST", LV_EVENT_HIT_TEST);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_EVENT_INDEV_RESET", LV_EVENT_INDEV_RESET);
+    dump_constant("LV_EVENT_HOVER_OVER", LV_EVENT_HOVER_OVER);
+    dump_constant("LV_EVENT_HOVER_LEAVE", LV_EVENT_HOVER_LEAVE);
+#else
+    dump_constant_undefined("LV_EVENT_INDEV_RESET");
+    dump_constant_undefined("LV_EVENT_HOVER_OVER");
+    dump_constant_undefined("LV_EVENT_HOVER_LEAVE");
+#endif
+    dump_constant("LV_EVENT_COVER_CHECK", LV_EVENT_COVER_CHECK);
+    dump_constant("LV_EVENT_REFR_EXT_DRAW_SIZE", LV_EVENT_REFR_EXT_DRAW_SIZE);
+    dump_constant("LV_EVENT_DRAW_MAIN_BEGIN", LV_EVENT_DRAW_MAIN_BEGIN);
+    dump_constant("LV_EVENT_DRAW_MAIN", LV_EVENT_DRAW_MAIN);
+    dump_constant("LV_EVENT_DRAW_MAIN_END", LV_EVENT_DRAW_MAIN_END);
+    dump_constant("LV_EVENT_DRAW_POST_BEGIN", LV_EVENT_DRAW_POST_BEGIN);
+    dump_constant("LV_EVENT_DRAW_POST", LV_EVENT_DRAW_POST);
+    dump_constant("LV_EVENT_DRAW_POST_END", LV_EVENT_DRAW_POST_END);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_EVENT_DRAW_TASK_ADDED", LV_EVENT_DRAW_TASK_ADDED);
+    dump_constant_undefined("LV_EVENT_DRAW_PART_BEGIN");
+    dump_constant_undefined("LV_EVENT_DRAW_PART_END");
+#else
+    dump_constant_undefined("LV_EVENT_DRAW_TASK_ADDED");
+    dump_constant("LV_EVENT_DRAW_PART_BEGIN", LV_EVENT_DRAW_PART_BEGIN);
+    dump_constant("LV_EVENT_DRAW_PART_END", LV_EVENT_DRAW_PART_END);
+#endif
+    dump_constant("LV_EVENT_VALUE_CHANGED", LV_EVENT_VALUE_CHANGED);
+    dump_constant("LV_EVENT_INSERT", LV_EVENT_INSERT);
+    dump_constant("LV_EVENT_REFRESH", LV_EVENT_REFRESH);
+    dump_constant("LV_EVENT_READY", LV_EVENT_READY);
+    dump_constant("LV_EVENT_CANCEL", LV_EVENT_CANCEL);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_EVENT_CREATE", LV_EVENT_CREATE);
+#else
+    dump_constant_undefined("LV_EVENT_CREATE");
+#endif
+    dump_constant("LV_EVENT_DELETE", LV_EVENT_DELETE);
+    dump_constant("LV_EVENT_CHILD_CHANGED", LV_EVENT_CHILD_CHANGED);
+    dump_constant("LV_EVENT_CHILD_CREATED", LV_EVENT_CHILD_CREATED);
+    dump_constant("LV_EVENT_CHILD_DELETED", LV_EVENT_CHILD_DELETED);
+    dump_constant("LV_EVENT_SCREEN_UNLOAD_START", LV_EVENT_SCREEN_UNLOAD_START);
+    dump_constant("LV_EVENT_SCREEN_LOAD_START", LV_EVENT_SCREEN_LOAD_START);
+    dump_constant("LV_EVENT_SCREEN_LOADED", LV_EVENT_SCREEN_LOADED);
+    dump_constant("LV_EVENT_SCREEN_UNLOADED", LV_EVENT_SCREEN_UNLOADED);
+    dump_constant("LV_EVENT_SIZE_CHANGED", LV_EVENT_SIZE_CHANGED);
+    dump_constant("LV_EVENT_STYLE_CHANGED", LV_EVENT_STYLE_CHANGED);
+    dump_constant("LV_EVENT_LAYOUT_CHANGED", LV_EVENT_LAYOUT_CHANGED);
+    dump_constant("LV_EVENT_GET_SELF_SIZE", LV_EVENT_GET_SELF_SIZE);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_EVENT_INVALIDATE_AREA", LV_EVENT_INVALIDATE_AREA);
+    dump_constant("LV_EVENT_RESOLUTION_CHANGED", LV_EVENT_RESOLUTION_CHANGED);
+    dump_constant("LV_EVENT_COLOR_FORMAT_CHANGED", LV_EVENT_COLOR_FORMAT_CHANGED);
+    dump_constant("LV_EVENT_REFR_REQUEST", LV_EVENT_REFR_REQUEST);
+    dump_constant("LV_EVENT_REFR_START", LV_EVENT_REFR_START);
+    dump_constant("LV_EVENT_REFR_READY", LV_EVENT_REFR_READY);
+    dump_constant("LV_EVENT_RENDER_START", LV_EVENT_RENDER_START);
+    dump_constant("LV_EVENT_RENDER_READY", LV_EVENT_RENDER_READY);
+    dump_constant("LV_EVENT_FLUSH_START", LV_EVENT_FLUSH_START);
+    dump_constant("LV_EVENT_FLUSH_FINISH", LV_EVENT_FLUSH_FINISH);
+    dump_constant("LV_EVENT_FLUSH_WAIT_START", LV_EVENT_FLUSH_WAIT_START);
+    dump_constant("LV_EVENT_FLUSH_WAIT_FINISH", LV_EVENT_FLUSH_WAIT_FINISH);
+    dump_constant("LV_EVENT_VSYNC", LV_EVENT_VSYNC);
+#else
+    dump_constant_undefined("LV_EVENT_INVALIDATE_AREA");
+    dump_constant_undefined("LV_EVENT_RESOLUTION_CHANGED");
+    dump_constant_undefined("LV_EVENT_COLOR_FORMAT_CHANGED");
+    dump_constant_undefined("LV_EVENT_REFR_REQUEST");
+    dump_constant_undefined("LV_EVENT_REFR_START");
+    dump_constant_undefined("LV_EVENT_REFR_READY");
+    dump_constant_undefined("LV_EVENT_RENDER_START");
+    dump_constant_undefined("LV_EVENT_RENDER_READY");
+    dump_constant_undefined("LV_EVENT_FLUSH_START");
+    dump_constant_undefined("LV_EVENT_FLUSH_FINISH");
+    dump_constant_undefined("LV_EVENT_FLUSH_WAIT_START");
+    dump_constant_undefined("LV_EVENT_FLUSH_WAIT_FINISH");
+    dump_constant_undefined("LV_EVENT_VSYNC");
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_IMG_CF_RAW", LV_COLOR_FORMAT_RAW);
+    dump_constant("LV_IMG_CF_RAW_ALPHA", LV_COLOR_FORMAT_RAW_ALPHA);
+    dump_constant_undefined("LV_IMG_CF_RAW_CHROMA");
+    dump_constant("LV_IMG_CF_INDEXED_1_BIT", LV_COLOR_FORMAT_I1);
+    dump_constant("LV_IMG_CF_INDEXED_2_BIT", LV_COLOR_FORMAT_I2);
+    dump_constant("LV_IMG_CF_INDEXED_4_BIT", LV_COLOR_FORMAT_I4);
+    dump_constant("LV_IMG_CF_INDEXED_8_BIT", LV_COLOR_FORMAT_I8);
+    dump_constant("LV_IMG_CF_ALPHA_1_BIT", LV_COLOR_FORMAT_A1);
+    dump_constant("LV_IMG_CF_ALPHA_2_BIT", LV_COLOR_FORMAT_A2);
+    dump_constant("LV_IMG_CF_ALPHA_4_BIT", LV_COLOR_FORMAT_A4);
+    dump_constant("LV_IMG_CF_ALPHA_8_BIT", LV_COLOR_FORMAT_A8);
+    dump_constant("LV_IMG_CF_L8", LV_COLOR_FORMAT_L8);
+    dump_constant("LV_IMG_CF_RGB565", LV_COLOR_FORMAT_RGB565);
+    dump_constant("LV_IMG_CF_RGB565A8", LV_COLOR_FORMAT_RGB565A8);
+    dump_constant("LV_IMG_CF_TRUE_COLOR", LV_COLOR_FORMAT_RGB888);
+    dump_constant("LV_IMG_CF_TRUE_COLOR_ALPHA", LV_COLOR_FORMAT_ARGB8888);
+    dump_constant("LV_IMG_CF_TRUE_COLOR_CHROMA", LV_COLOR_FORMAT_XRGB8888);
+#else
+    dump_constant("LV_IMG_CF_RAW", LV_IMG_CF_RAW);
+    dump_constant("LV_IMG_CF_RAW_ALPHA", LV_IMG_CF_RAW_ALPHA);
+    dump_constant("LV_IMG_CF_RAW_CHROMA", LV_IMG_CF_RAW_CHROMA_KEYED);
+    dump_constant("LV_IMG_CF_INDEXED_1_BIT", LV_IMG_CF_INDEXED_1BIT);
+    dump_constant("LV_IMG_CF_INDEXED_2_BIT", LV_IMG_CF_INDEXED_2BIT);
+    dump_constant("LV_IMG_CF_INDEXED_4_BIT", LV_IMG_CF_INDEXED_4BIT);
+    dump_constant("LV_IMG_CF_INDEXED_8_BIT", LV_IMG_CF_INDEXED_8BIT);
+    dump_constant("LV_IMG_CF_ALPHA_1_BIT", LV_IMG_CF_ALPHA_1BIT);
+    dump_constant("LV_IMG_CF_ALPHA_2_BIT", LV_IMG_CF_ALPHA_2BIT);
+    dump_constant("LV_IMG_CF_ALPHA_4_BIT", LV_IMG_CF_ALPHA_4BIT);
+    dump_constant("LV_IMG_CF_ALPHA_8_BIT", LV_IMG_CF_ALPHA_8BIT);
+    dump_constant_undefined("LV_IMG_CF_L8");
+    dump_constant("LV_IMG_CF_RGB565", LV_IMG_CF_RGB565);
+    dump_constant("LV_IMG_CF_RGB565A8", LV_IMG_CF_RGB565A8);
+    dump_constant("LV_IMG_CF_TRUE_COLOR", LV_IMG_CF_TRUE_COLOR);
+    dump_constant("LV_IMG_CF_TRUE_COLOR_ALPHA", LV_IMG_CF_TRUE_COLOR_ALPHA);
+    dump_constant("LV_IMG_CF_TRUE_COLOR_CHROMA", LV_IMG_CF_TRUE_COLOR_CHROMA_KEYED);
+#endif
+
+    dump_constant("LV_LABEL_LONG_WRAP", LV_LABEL_LONG_WRAP);
+    dump_constant("LV_LABEL_LONG_DOT", LV_LABEL_LONG_DOT);
+    dump_constant("LV_LABEL_LONG_SCROLL", LV_LABEL_LONG_SCROLL);
+    dump_constant("LV_LABEL_LONG_SCROLL_CIRCULAR", LV_LABEL_LONG_SCROLL_CIRCULAR);
+    dump_constant("LV_LABEL_LONG_CLIP", LV_LABEL_LONG_CLIP);
+
+    dump_constant("LV_SLIDER_MODE_NORMAL", LV_SLIDER_MODE_NORMAL);
+    dump_constant("LV_SLIDER_MODE_SYMMETRICAL", LV_SLIDER_MODE_SYMMETRICAL);
+    dump_constant("LV_SLIDER_MODE_RANGE", LV_SLIDER_MODE_RANGE);
+
+    dump_constant("LV_ROLLER_MODE_NORMAL", LV_ROLLER_MODE_NORMAL);
+    dump_constant("LV_ROLLER_MODE_INFINITE", LV_ROLLER_MODE_INFINITE);
+    
+    dump_constant("LV_BAR_MODE_NORMAL", LV_BAR_MODE_NORMAL);
+    dump_constant("LV_BAR_MODE_SYMMETRICAL", LV_BAR_MODE_SYMMETRICAL);
+    dump_constant("LV_BAR_MODE_RANGE", LV_BAR_MODE_RANGE);
+    
+    dump_constant("LV_ARC_MODE_NORMAL", LV_ARC_MODE_NORMAL);
+    dump_constant("LV_ARC_MODE_SYMMETRICAL", LV_ARC_MODE_SYMMETRICAL);
+    dump_constant("LV_ARC_MODE_REVERSE", LV_ARC_MODE_REVERSE);
+
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant_undefined("LV_COLORWHEEL_MODE_HUE");
+    dump_constant_undefined("LV_COLORWHEEL_MODE_SATURATION");
+    dump_constant_undefined("LV_COLORWHEEL_MODE_VALUE");
+#else
+    dump_constant("LV_COLORWHEEL_MODE_HUE", LV_COLORWHEEL_MODE_HUE);
+    dump_constant("LV_COLORWHEEL_MODE_SATURATION", LV_COLORWHEEL_MODE_SATURATION);
+    dump_constant("LV_COLORWHEEL_MODE_VALUE", LV_COLORWHEEL_MODE_VALUE);
+#endif
+    
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_IMAGEBUTTON_STATE_RELEASED", LV_IMAGEBUTTON_STATE_RELEASED);
+    dump_constant("LV_IMAGEBUTTON_STATE_PRESSED", LV_IMAGEBUTTON_STATE_PRESSED);
+    dump_constant("LV_IMAGEBUTTON_STATE_DISABLED", LV_IMAGEBUTTON_STATE_DISABLED);
+    dump_constant("LV_IMAGEBUTTON_STATE_CHECKED_RELEASED", LV_IMAGEBUTTON_STATE_CHECKED_RELEASED);
+    dump_constant("LV_IMAGEBUTTON_STATE_CHECKED_PRESSED", LV_IMAGEBUTTON_STATE_CHECKED_PRESSED);
+    dump_constant("LV_IMAGEBUTTON_STATE_CHECKED_DISABLED", LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+#else
+    dump_constant("LV_IMGBTN_STATE_RELEASED", LV_IMGBTN_STATE_RELEASED);
+    dump_constant("LV_IMGBTN_STATE_PRESSED", LV_IMGBTN_STATE_PRESSED);
+    dump_constant("LV_IMGBTN_STATE_DISABLED", LV_IMGBTN_STATE_DISABLED);
+    dump_constant("LV_IMGBTN_STATE_CHECKED_RELEASED", LV_IMGBTN_STATE_CHECKED_RELEASED);
+    dump_constant("LV_IMGBTN_STATE_CHECKED_PRESSED", LV_IMGBTN_STATE_CHECKED_PRESSED);
+    dump_constant("LV_IMGBTN_STATE_CHECKED_DISABLED", LV_IMGBTN_STATE_CHECKED_DISABLED);
+#endif
+
+    dump_constant("LV_KEYBOARD_MODE_TEXT_LOWER", LV_KEYBOARD_MODE_TEXT_LOWER);
+    dump_constant("LV_KEYBOARD_MODE_TEXT_UPPER", LV_KEYBOARD_MODE_TEXT_UPPER);
+    dump_constant("LV_KEYBOARD_MODE_SPECIAL", LV_KEYBOARD_MODE_SPECIAL);
+    dump_constant("LV_KEYBOARD_MODE_NUMBER", LV_KEYBOARD_MODE_NUMBER);
+    dump_constant("LV_KEYBOARD_MODE_USER_1", LV_KEYBOARD_MODE_USER_1);
+    dump_constant("LV_KEYBOARD_MODE_USER_2", LV_KEYBOARD_MODE_USER_2);
+    dump_constant("LV_KEYBOARD_MODE_USER_3", LV_KEYBOARD_MODE_USER_3);
+    dump_constant("LV_KEYBOARD_MODE_USER_4", LV_KEYBOARD_MODE_USER_4);
+    
+#if LVGL_VERSION_MAJOR >= 9    
+    dump_constant("LV_SCALE_MODE_HORIZONTAL_TOP", LV_SCALE_MODE_HORIZONTAL_TOP);
+    dump_constant("LV_SCALE_MODE_HORIZONTAL_BOTTOM", LV_SCALE_MODE_HORIZONTAL_BOTTOM);
+    dump_constant("LV_SCALE_MODE_VERTICAL_LEFT", LV_SCALE_MODE_VERTICAL_LEFT);
+    dump_constant("LV_SCALE_MODE_VERTICAL_RIGHT", LV_SCALE_MODE_VERTICAL_RIGHT);
+    dump_constant("LV_SCALE_MODE_ROUND_INNER", LV_SCALE_MODE_ROUND_INNER);
+    dump_constant("LV_SCALE_MODE_ROUND_OUTER", LV_SCALE_MODE_ROUND_OUTER);
+#else
+    dump_constant_undefined("LV_SCALE_MODE_HORIZONTAL_TOP");
+    dump_constant_undefined("LV_SCALE_MODE_HORIZONTAL_BOTTOM");
+    dump_constant_undefined("LV_SCALE_MODE_VERTICAL_LEFT");
+    dump_constant_undefined("LV_SCALE_MODE_VERTICAL_RIGHT");
+    dump_constant_undefined("LV_SCALE_MODE_ROUND_INNER");
+    dump_constant_undefined("LV_SCALE_MODE_ROUND_OUTER");
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_IMAGE_ALIGN_DEFAULT", LV_IMAGE_ALIGN_DEFAULT);
+    dump_constant("LV_IMAGE_ALIGN_TOP_LEFT", LV_IMAGE_ALIGN_TOP_LEFT);
+    dump_constant("LV_IMAGE_ALIGN_TOP_MID", LV_IMAGE_ALIGN_TOP_MID);
+    dump_constant("LV_IMAGE_ALIGN_TOP_RIGHT", LV_IMAGE_ALIGN_TOP_RIGHT);
+    dump_constant("LV_IMAGE_ALIGN_BOTTOM_LEFT", LV_IMAGE_ALIGN_BOTTOM_LEFT);
+    dump_constant("LV_IMAGE_ALIGN_BOTTOM_MID", LV_IMAGE_ALIGN_BOTTOM_MID);
+    dump_constant("LV_IMAGE_ALIGN_BOTTOM_RIGHT", LV_IMAGE_ALIGN_BOTTOM_RIGHT);
+    dump_constant("LV_IMAGE_ALIGN_LEFT_MID", LV_IMAGE_ALIGN_LEFT_MID);
+    dump_constant("LV_IMAGE_ALIGN_RIGHT_MID", LV_IMAGE_ALIGN_RIGHT_MID);
+    dump_constant("LV_IMAGE_ALIGN_CENTER", LV_IMAGE_ALIGN_CENTER);
+#if LVGL_VERSION_MINOR >= 4
+    dump_constant("_LV_IMAGE_ALIGN_AUTO_TRANSFORM", _LV_IMAGE_ALIGN_AUTO_TRANSFORM);
+#else
+    dump_constant("LV_IMAGE_ALIGN_AUTO_TRANSFORM", LV_IMAGE_ALIGN_AUTO_TRANSFORM);
+#endif
+    dump_constant("LV_IMAGE_ALIGN_STRETCH", LV_IMAGE_ALIGN_STRETCH);
+    dump_constant("LV_IMAGE_ALIGN_TILE", LV_IMAGE_ALIGN_TILE);
+#else
+    dump_constant_undefined("LV_IMAGE_ALIGN_DEFAULT");
+    dump_constant_undefined("LV_IMAGE_ALIGN_TOP_LEFT");
+    dump_constant_undefined("LV_IMAGE_ALIGN_TOP_MID");
+    dump_constant_undefined("LV_IMAGE_ALIGN_TOP_RIGHT");
+    dump_constant_undefined("LV_IMAGE_ALIGN_BOTTOM_LEFT");
+    dump_constant_undefined("LV_IMAGE_ALIGN_BOTTOM_MID");
+    dump_constant_undefined("LV_IMAGE_ALIGN_BOTTOM_RIGHT");
+    dump_constant_undefined("LV_IMAGE_ALIGN_LEFT_MID");
+    dump_constant_undefined("LV_IMAGE_ALIGN_RIGHT_MID");
+    dump_constant_undefined("LV_IMAGE_ALIGN_CENTER");
+    dump_constant_undefined("LV_IMAGE_ALIGN_AUTO_TRANSFORM");
+    dump_constant_undefined("LV_IMAGE_ALIGN_STRETCH");
+    dump_constant_undefined("LV_IMAGE_ALIGN_TILE");
+#endif
+
+    dump_constant("LV_SCR_LOAD_ANIM_NONE", LV_SCR_LOAD_ANIM_NONE);
+    dump_constant("LV_SCR_LOAD_ANIM_OVER_LEFT", LV_SCR_LOAD_ANIM_OVER_LEFT);
+    dump_constant("LV_SCR_LOAD_ANIM_OVER_RIGHT", LV_SCR_LOAD_ANIM_OVER_RIGHT);
+    dump_constant("LV_SCR_LOAD_ANIM_OVER_TOP", LV_SCR_LOAD_ANIM_OVER_TOP);
+    dump_constant("LV_SCR_LOAD_ANIM_OVER_BOTTOM", LV_SCR_LOAD_ANIM_OVER_BOTTOM);
+    dump_constant("LV_SCR_LOAD_ANIM_MOVE_LEFT", LV_SCR_LOAD_ANIM_MOVE_LEFT);
+    dump_constant("LV_SCR_LOAD_ANIM_MOVE_RIGHT", LV_SCR_LOAD_ANIM_MOVE_RIGHT);
+    dump_constant("LV_SCR_LOAD_ANIM_MOVE_TOP", LV_SCR_LOAD_ANIM_MOVE_TOP);
+    dump_constant("LV_SCR_LOAD_ANIM_MOVE_BOTTOM", LV_SCR_LOAD_ANIM_MOVE_BOTTOM);
+    dump_constant("LV_SCR_LOAD_ANIM_FADE_IN", LV_SCR_LOAD_ANIM_FADE_IN);
+    dump_constant("LV_SCR_LOAD_ANIM_FADE_OUT", LV_SCR_LOAD_ANIM_FADE_OUT);
+    dump_constant("LV_SCR_LOAD_ANIM_OUT_LEFT", LV_SCR_LOAD_ANIM_OUT_LEFT);
+    dump_constant("LV_SCR_LOAD_ANIM_OUT_RIGHT", LV_SCR_LOAD_ANIM_OUT_RIGHT);
+    dump_constant("LV_SCR_LOAD_ANIM_OUT_TOP", LV_SCR_LOAD_ANIM_OUT_TOP);
+    dump_constant("LV_SCR_LOAD_ANIM_OUT_BOTTOM", LV_SCR_LOAD_ANIM_OUT_BOTTOM);
+
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_HIDDEN", LV_BUTTONMATRIX_CTRL_HIDDEN, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_NO_REPEAT", LV_BUTTONMATRIX_CTRL_NO_REPEAT, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_DISABLED", LV_BUTTONMATRIX_CTRL_DISABLED, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_CHECKABLE", LV_BUTTONMATRIX_CTRL_CHECKABLE, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_CHECKED", LV_BUTTONMATRIX_CTRL_CHECKED, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_CLICK_TRIG", LV_BUTTONMATRIX_CTRL_CLICK_TRIG, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_POPOVER", LV_BUTTONMATRIX_CTRL_POPOVER, 4);
+#if LVGL_VERSION_MINOR >= 3
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_RECOLOR", LV_BUTTONMATRIX_CTRL_RECOLOR, 4);
+#else
+    dump_constant_undefined("LV_BUTTONMATRIX_CTRL_RECOLOR");
+#endif
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_CUSTOM_1", LV_BUTTONMATRIX_CTRL_CUSTOM_1, 4);
+    dump_constant_hex("LV_BUTTONMATRIX_CTRL_CUSTOM_2", LV_BUTTONMATRIX_CTRL_CUSTOM_2, 4);
+#else
+    dump_constant_hex("LV_BTNMATRIX_CTRL_HIDDEN", LV_BTNMATRIX_CTRL_HIDDEN, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_NO_REPEAT", LV_BTNMATRIX_CTRL_NO_REPEAT, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_DISABLED", LV_BTNMATRIX_CTRL_DISABLED, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_CHECKABLE", LV_BTNMATRIX_CTRL_CHECKABLE, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_CHECKED", LV_BTNMATRIX_CTRL_CHECKED, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_CLICK_TRIG", LV_BTNMATRIX_CTRL_CLICK_TRIG, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_POPOVER", LV_BTNMATRIX_CTRL_POPOVER, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_RECOLOR", LV_BTNMATRIX_CTRL_RECOLOR, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_CUSTOM_1", LV_BTNMATRIX_CTRL_CUSTOM_1, 4);
+    dump_constant_hex("LV_BTNMATRIX_CTRL_CUSTOM_2", LV_BTNMATRIX_CTRL_CUSTOM_2, 4);
+#endif
+
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_COORD_TYPE_SHIFT", LV_COORD_TYPE_SHIFT);
+    dump_constant("LV_COORD_TYPE_SPEC", LV_COORD_TYPE_SPEC);
+#else
+    dump_constant("LV_COORD_TYPE_SHIFT", _LV_COORD_TYPE_SHIFT);
+    dump_constant("LV_COORD_TYPE_SPEC", _LV_COORD_TYPE_SPEC);
+#endif
+    dump_constant("LV_COORD_MAX", LV_COORD_MAX);
+    dump_constant("LV_SIZE_CONTENT", LV_SIZE_CONTENT);
+#if LVGL_VERSION_MAJOR >= 9
+    dump_constant("LV_PCT_STORED_MAX", LV_PCT_STORED_MAX);
+    dump_constant("LV_PCT_POS_MAX", LV_PCT_POS_MAX);
+#else
+    dump_constant_undefined("LV_PCT_STORED_MAX");
+    dump_constant_undefined("LV_PCT_POS_MAX");
+#endif
+
+    dump_constant_last("dummy", 0);
+}
+
 EM_PORT_API(const char *) getStudioSymbols() {
     hor_res = 400;
     ver_res = 400;
@@ -896,6 +1354,8 @@ EM_PORT_API(const char *) getStudioSymbols() {
     dump_custom_styles();
     symbols_append("],\"widget_flags\":{");
     dump_widgets_flags_info();
+    symbols_append("},\"constants\":{");
+    dump_constants();
     symbols_append("}}");
 
     return g_symbolsString.ptr;
