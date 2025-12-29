@@ -32,11 +32,11 @@ const LVGL_INCLUDE2 = `#if defined(EEZ_FOR_LVGL)
 #endif
 `;
 
-const OUT_DIR = "../../release/eez-framework-amalgamation";
+const OUT_DIR = "../../../release/eez-framework-amalgamation";
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const EEZ_FRAMEWORK_PATH = path.resolve("../..//eez-framework");
+const EEZ_FRAMEWORK_PATH = path.resolve("../../../eez-framework");
 
 const BASE_PATH = path.resolve(EEZ_FRAMEWORK_PATH + "/src/eez");
 
