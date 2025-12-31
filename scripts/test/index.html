@@ -9,7 +9,7 @@
 <script>
 const lvglConstructor = module["exports"];
 </script>
-<script src="script-compiler.js"></script>
+<script src="eez-script.js"></script>
 
 <script>
     const DISPLAY_WIDTH = 800;
@@ -123,8 +123,8 @@ const lvglConstructor = module["exports"];
         LV_STATE_DEFAULT: 0
     }
 
-    // Compile the simplified script
-    const script = compile_to_javascript(`
+    // Compile the EEZ Script
+    const script = eez_script_compile(`
         function create_button(parent: lv_obj, label_text: string): lv_obj {
             let button: lv_obj = lv_button_create(parent);
             lv_obj_set_pos(button, 307, 374);

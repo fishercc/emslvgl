@@ -1,8 +1,9 @@
 /**
- * Simple script language compiler and interpreter
+ * EEZ Script - A JavaScript-like scripting language for embedded systems
  * 
- * This provides a controlled execution environment for a simple JavaScript-like language.
- * Only supports: functions, variables (let/const), expressions, function calls, if, for, return
+ * This provides a controlled execution environment with type checking and security features.
+ * Features: functions, variables (let/const), expressions, function calls, if/for/while loops,
+ * typed parameters, automatic string-to-cstring conversion, LVGL integration
  */
 
 // ============================================================================
@@ -1309,7 +1310,49 @@ class Interpreter {
 // PUBLIC API
 // ============================================================================
 
-function compile_to_javascript(script) {
+/**
+ * EEZ Script version information
+ */
+const EEZ_SCRIPT_VERSION = '1.0.0';
+
+function eez_script_version() {
+    return {
+        version: EEZ_SCRIPT_VERSION,
+        name: 'EEZ Script',
+        description: 'A JavaScript-like scripting language for embedded systems',
+        features: [
+            'TypeScript-like type annotations',
+            'Automatic string-to-cstring conversion',
+            'LVGL integration',
+            'Function whitelisting',
+            'Type checking'
+        ]
+    };
+}
+
+function eez_script_validate(script) {
+    try {
+        // Tokenize
+        const lexer = new Lexer(script);
+        const tokens = lexer.tokenize();
+        
+        // Parse
+        const parser = new Parser(tokens);
+        const ast = parser.parseProgram();
+        
+        return {
+            valid: true,
+            ast: ast
+        };
+    } catch (error) {
+        return {
+            valid: false,
+            error: error.message
+        };
+    }
+}
+
+function eez_script_compile(script) {
     let ast;
     
     try {
@@ -1349,7 +1392,10 @@ function compile_to_javascript(script) {
 // Export for use in browser or Node.js
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = { 
-        compile_to_javascript,
+        eez_script_compile,
+        eez_script_version,
+        eez_script_validate,
+        compile_to_javascript: eez_script_compile, // Backward compatibility alias
         Lexer,
         Parser,
         Interpreter

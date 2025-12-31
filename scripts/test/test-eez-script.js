@@ -1,10 +1,10 @@
 /**
- * Tests for script-compiler.js
- * Run with: node test-script-compiler.js
+ * Tests for EEZ Script
+ * Run with: node test-eez-script.js
  */
 
-// Load the compiler
-const { compile_to_javascript, Lexer, Parser, Interpreter } = require('./script-compiler.js');
+// Load the EEZ Script compiler
+const { eez_script_compile, eez_script_version, eez_script_validate, Lexer, Parser, Interpreter } = require('./eez-script.js');
 
 // Test framework
 let testCount = 0;
@@ -234,7 +234,7 @@ test('Parser: parse member expression', () => {
 console.log('\n--- Interpreter Tests ---');
 
 test('Interpreter: execute simple arithmetic', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function add(a, b) {
             return a + b;
         }
@@ -245,7 +245,7 @@ test('Interpreter: execute simple arithmetic', () => {
 });
 
 test('Interpreter: execute with variables', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let x = 10;
             let y = 20;
@@ -258,7 +258,7 @@ test('Interpreter: execute with variables', () => {
 });
 
 test('Interpreter: execute if statement', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function max(a, b) {
             if (a > b) {
                 return a;
@@ -273,7 +273,7 @@ test('Interpreter: execute if statement', () => {
 });
 
 test('Interpreter: execute for loop', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function sum(n) {
             let result = 0;
             for (let i = 0; i <= n; i++) {
@@ -288,7 +288,7 @@ test('Interpreter: execute for loop', () => {
 });
 
 test('Interpreter: execute while loop', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function countdown(n) {
             let count = n;
             while (count > 0) {
@@ -303,7 +303,7 @@ test('Interpreter: execute while loop', () => {
 });
 
 test('Interpreter: bitwise OR operator', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function combine() {
             return LV_PART_MAIN | LV_STATE_DEFAULT;
         }
@@ -314,7 +314,7 @@ test('Interpreter: bitwise OR operator', () => {
 });
 
 test('Interpreter: bitwise AND operator', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return 5 & 3;
         }
@@ -325,7 +325,7 @@ test('Interpreter: bitwise AND operator', () => {
 });
 
 test('Interpreter: bitwise XOR operator', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return 5 ^ 3;
         }
@@ -336,7 +336,7 @@ test('Interpreter: bitwise XOR operator', () => {
 });
 
 test('Interpreter: call lv_* functions', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function create() {
             let obj = lv_obj_create(0);
             return obj;
@@ -349,7 +349,7 @@ test('Interpreter: call lv_* functions', () => {
 });
 
 test('Interpreter: nested function calls', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function helper(x) {
             return x * 2;
         }
@@ -364,7 +364,7 @@ test('Interpreter: nested function calls', () => {
 });
 
 test('Interpreter: complex LVGL example', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function create_button(parent) {
             let button = lv_button_create(parent);
             lv_obj_set_pos(button, 100, 200);
@@ -388,7 +388,7 @@ test('Interpreter: complex LVGL example', () => {
 });
 
 test('Interpreter: member access', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0);
             lv_obj_set_pos(obj, 10, 20);
@@ -401,7 +401,7 @@ test('Interpreter: member access', () => {
 });
 
 test('Interpreter: string literals', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function get_text() {
             return "Hello World";
         }
@@ -412,7 +412,7 @@ test('Interpreter: string literals', () => {
 });
 
 test('Interpreter: logical operators', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test_and(a, b) {
             return a && b;
         }
@@ -428,7 +428,7 @@ test('Interpreter: logical operators', () => {
 });
 
 test('Interpreter: comparison operators', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test(a, b) {
             return a < b;
         }
@@ -439,7 +439,7 @@ test('Interpreter: comparison operators', () => {
 });
 
 test('Interpreter: compound assignment', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let x = 10;
             x += 5;
@@ -452,7 +452,7 @@ test('Interpreter: compound assignment', () => {
 });
 
 test('Interpreter: unary operators', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test_not(x) {
             return !x;
         }
@@ -467,7 +467,7 @@ test('Interpreter: unary operators', () => {
 });
 
 test('Interpreter: increment/decrement', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test_inc() {
             let x = 5;
             ++x;
@@ -491,7 +491,7 @@ test('Interpreter: access globals', () => {
             add: (a, b) => a + b
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function get_version() {
             return System.version;
         }
@@ -511,7 +511,7 @@ test('Interpreter: access globals', () => {
 console.log('\n--- Error Handling Tests ---');
 
 test('Error: undefined variable', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return undefinedVar;
         }
@@ -526,7 +526,7 @@ test('Error: undefined variable', () => {
 });
 
 test('Error: undefined function', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return 42;
         }
@@ -541,7 +541,7 @@ test('Error: undefined function', () => {
 });
 
 test('Error: unknown LVGL function', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return lv_nonexistent_function();
         }
@@ -557,7 +557,7 @@ test('Error: unknown LVGL function', () => {
 
 test('Error: LVGL function not in allowed list', () => {
     const allowedFunctions = ['lv_obj_create', 'lv_obj_set_pos'];
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0);
             lv_button_create(obj);  // This should fail
@@ -575,7 +575,7 @@ test('Error: LVGL function not in allowed list', () => {
 
 test('Success: LVGL function in allowed list', () => {
     const allowedFunctions = ['lv_obj_create', 'lv_obj_set_pos'];
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0);
             lv_obj_set_pos(obj, 10, 20);
@@ -594,7 +594,7 @@ test('Error: wrong number of arguments (too few)', () => {
         'lv_obj_create': 1,
         'lv_obj_set_pos': 3
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0);
             lv_obj_set_pos(obj, 10);  // Missing 3rd argument
@@ -615,7 +615,7 @@ test('Error: wrong number of arguments (too many)', () => {
         'lv_obj_create': 1,
         'lv_obj_set_pos': 3
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0, 1, 2);  // Too many arguments
             return obj;
@@ -636,7 +636,7 @@ test('Success: correct number of arguments', () => {
         'lv_obj_set_pos': 3,
         'lv_obj_set_size': 3
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0);
             lv_obj_set_pos(obj, 100, 200);
@@ -658,7 +658,7 @@ test('Success: flexible argument count with min/max', () => {
         'lv_obj_create': 1,
         'lv_obj_set_pos': { min: 2, max: 3 }  // Allow 2 or 3 args
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj = lv_obj_create(0);
             lv_obj_set_pos(obj, 10, 20);  // 3 args total (obj + 2)
@@ -701,7 +701,7 @@ test('Type: parse variable with type annotation', () => {
 });
 
 test('Type: variable type checking success', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let x: number = 42;
             let y: string = "hello";
@@ -715,7 +715,7 @@ test('Type: variable type checking success', () => {
 });
 
 test('Type: variable type mismatch error', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let x: number = "hello";
             return x;
@@ -731,7 +731,7 @@ test('Type: variable type mismatch error', () => {
 });
 
 test('Type: function parameter type checking', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function add(x: number, y: number): number {
             return x + y;
         }
@@ -745,7 +745,7 @@ test('Type: function parameter type checking', () => {
 });
 
 test('Type: function parameter type mismatch', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function greet(name: string): string {
             return name;
         }
@@ -763,7 +763,7 @@ test('Type: function parameter type mismatch', () => {
 });
 
 test('Type: function return type checking', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function getString(): string {
             return "hello";
         }
@@ -774,7 +774,7 @@ test('Type: function return type checking', () => {
 });
 
 test('Type: function return type mismatch', () => {
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function getNumber(): number {
             return "not a number";
         }
@@ -793,7 +793,7 @@ test('Type: LVGL function with type checking', () => {
         'lv_obj_create': { params: ['number'], returnType: 'lv_obj' },
         'lv_obj_set_pos': { params: ['lv_obj', 'number', 'number'], returnType: 'number' }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test(): lv_obj {
             let obj: lv_obj = lv_obj_create(0);
             lv_obj_set_pos(obj, 10, 20);
@@ -810,7 +810,7 @@ test('Type: LVGL function parameter type mismatch', () => {
         'lv_obj_create': { params: ['number'], returnType: 'lv_obj' },
         'lv_obj_set_pos': { params: ['lv_obj', 'number', 'number'], returnType: 'number' }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             lv_obj_set_pos("not an object", 10, 20);
         }
@@ -830,7 +830,7 @@ test('Type: custom lv_obj type compatibility', () => {
         'lv_button_create': { params: ['lv_obj'], returnType: 'lv_obj' },
         'lv_label_create': { params: ['lv_obj'], returnType: 'lv_obj' }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let obj: lv_obj = lv_obj_create(0);
             let btn: lv_obj = lv_button_create(obj);
@@ -860,7 +860,7 @@ test('Global function type checking: correct types', () => {
             returnType: 'string'
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let sum = add(5, 3);
             let text = concat("Hello", " World");
@@ -880,7 +880,7 @@ test('Global function type checking: wrong parameter type', () => {
             returnType: 'number'
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return add("5", 3);  // String instead of number
         }
@@ -902,7 +902,7 @@ test('Global function type checking: wrong argument count', () => {
             returnType: 'number'
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return add(5);  // Missing second argument
         }
@@ -924,7 +924,7 @@ test('Global function type checking: wrong return type', () => {
             returnType: 'number'
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return getString();
         }
@@ -946,7 +946,7 @@ test('Global function type checking: lv_obj type', () => {
             returnType: 'lv_obj'
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let widget = createWidget();
             return widget;
@@ -967,7 +967,7 @@ test('Nested global function with type checking', () => {
             }
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let addr = System.stringToUTF8("Hello");
             return addr;
@@ -988,7 +988,7 @@ test('Nested global function type checking: wrong parameter type', () => {
             }
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return System.stringToUTF8(123);  // Number instead of string
         }
@@ -1006,7 +1006,7 @@ test('Global function with no type specification still works', () => {
     const globals = {
         doSomething: (x) => x * 2
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return doSomething(21);
         }
@@ -1030,7 +1030,7 @@ test('CString: variable declaration with string auto-conversion', () => {
             }
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let str: cstring = "Hello World";
             return str;
@@ -1055,7 +1055,7 @@ test('CString: function parameter auto-conversion', () => {
         'lv_label_create': { params: ['number'], returnType: 'lv_obj' },
         'lv_label_set_text': { params: ['lv_obj', 'cstring'], returnType: 'number' }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let label: lv_obj = lv_label_create(0);
             lv_label_set_text(label, "My Label");
@@ -1077,7 +1077,7 @@ test('CString: user function parameter auto-conversion', () => {
             }
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function setLabel(obj: lv_obj, text: cstring) {
             return text;
         }
@@ -1108,7 +1108,7 @@ test('CString: global function parameter auto-conversion', () => {
             returnType: 'number'
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             return setText("Hello");
         }
@@ -1128,7 +1128,7 @@ test('CString: cstring value can be used as number', () => {
             }
         }
     };
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let str: cstring = "Test";
             let num: number = str;  // cstring is compatible with number
@@ -1142,7 +1142,7 @@ test('CString: cstring value can be used as number', () => {
 
 test('CString: error when System.stringToNewUTF8 not available', () => {
     const globals = {};
-    const script = compile_to_javascript(`
+    const script = eez_script_compile(`
         function test() {
             let str: cstring = "Hello";
             return str;
