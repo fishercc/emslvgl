@@ -615,4 +615,14 @@ EM_PORT_API(uint32_t) to_lvgl_color(uint32_t color) {
 #endif
 }
 
+EM_PORT_API(void) global_event_dispatcher(lv_event_t* e) {
+    void* user_data = lv_event_get_user_data(e);
+    int handler_id = (int)(uintptr_t)user_data;
+    
+    // Call JavaScript function with handler_id and event pointer
+    EM_ASM({
+        js_dispatch_event(handler_id, e);
+    }, handler_id, e);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
