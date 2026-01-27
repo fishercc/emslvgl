@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <emscripten.h>
 
 #include "lvgl/lvgl.h"
@@ -182,6 +183,31 @@ static const lv_font_t *BUILT_IN_FONTS[] = {
     &lv_font_montserrat_46,
     &lv_font_montserrat_48
 };
+
+EM_PORT_API(const void *) lvglGetBuiltinFontPtr(const char *font_name) {
+    if (strcmp(font_name, "MONTSERRAT_8") == 0) return &lv_font_montserrat_8;
+    if (strcmp(font_name, "MONTSERRAT_10") == 0) return &lv_font_montserrat_10;
+    if (strcmp(font_name, "MONTSERRAT_12") == 0) return &lv_font_montserrat_12;
+    if (strcmp(font_name, "MONTSERRAT_14") == 0) return &lv_font_montserrat_14;
+    if (strcmp(font_name, "MONTSERRAT_16") == 0) return &lv_font_montserrat_16;
+    if (strcmp(font_name, "MONTSERRAT_18") == 0) return &lv_font_montserrat_18;
+    if (strcmp(font_name, "MONTSERRAT_20") == 0) return &lv_font_montserrat_20;
+    if (strcmp(font_name, "MONTSERRAT_22") == 0) return &lv_font_montserrat_22;
+    if (strcmp(font_name, "MONTSERRAT_24") == 0) return &lv_font_montserrat_24;
+    if (strcmp(font_name, "MONTSERRAT_26") == 0) return &lv_font_montserrat_26;
+    if (strcmp(font_name, "MONTSERRAT_28") == 0) return &lv_font_montserrat_28;
+    if (strcmp(font_name, "MONTSERRAT_30") == 0) return &lv_font_montserrat_30;
+    if (strcmp(font_name, "MONTSERRAT_32") == 0) return &lv_font_montserrat_32;
+    if (strcmp(font_name, "MONTSERRAT_34") == 0) return &lv_font_montserrat_34;
+    if (strcmp(font_name, "MONTSERRAT_36") == 0) return &lv_font_montserrat_36;
+    if (strcmp(font_name, "MONTSERRAT_38") == 0) return &lv_font_montserrat_38;
+    if (strcmp(font_name, "MONTSERRAT_40") == 0) return &lv_font_montserrat_40;
+    if (strcmp(font_name, "MONTSERRAT_42") == 0) return &lv_font_montserrat_42;
+    if (strcmp(font_name, "MONTSERRAT_44") == 0) return &lv_font_montserrat_44;
+    if (strcmp(font_name, "MONTSERRAT_46") == 0) return &lv_font_montserrat_46;
+    if (strcmp(font_name, "MONTSERRAT_48") == 0) return &lv_font_montserrat_48;
+    return 0;
+}
 
 EM_PORT_API(int32_t) lvglObjGetStylePropBuiltInFont(lv_obj_t *obj, lv_part_t part, lv_state_t state, lv_style_prop_t prop) {
     lv_state_t saved_state = lv_obj_get_state(obj);
@@ -633,9 +659,9 @@ EM_PORT_API(void *) get_global_dispatcher_ptr() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-EM_PORT_API(void *) lvglCreateFreeTypeFont(const char *filePath, int size, int style) {
+EM_PORT_API(void *) lvglCreateFreeTypeFont(const char *filePath, int size, int renderMode, int style) {
 #if LVGL_VERSION_MAJOR >= 9
-    lv_font_t *font = lv_freetype_font_create(filePath, LV_FREETYPE_FONT_RENDER_MODE_BITMAP, (uint32_t)size, (lv_freetype_font_style_t)style);
+    lv_font_t *font = lv_freetype_font_create(filePath, (lv_freetype_font_render_mode_t)renderMode, (uint32_t)size, (lv_freetype_font_style_t)style);
     
     if (!font) {
         LV_LOG_ERROR("font create failed: %s", filePath);

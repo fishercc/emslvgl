@@ -760,6 +760,12 @@ static const void *getLvglImageByName(const char *name) {
     }, eez::flow::g_wasmModuleId, name);
 }
 
+static const void *getLvglFontByName(const char *name) {
+    return (const void *)EM_ASM_INT({
+        return getLvglFontByName($0, UTF8ToString($1));
+    }, eez::flow::g_wasmModuleId, name);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 static const char *getLvglObjectNameFromIndex(int32_t index) {
@@ -788,6 +794,8 @@ static void lvglSetColorTheme(const char *themeName) {
     EM_ASM({
         lvglSetColorTheme($0, UTF8ToString($1));
     }, eez::flow::g_wasmModuleId, themeName);
+
+    eez_flow_set_theme(themeName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -844,6 +852,7 @@ extern "C" void flowInit(uint32_t wasmModuleId, uint32_t debuggerMessageSubscipt
     eez::flow::getLvglGroupByNameHook = getLvglGroupByName;
     eez::flow::getLvglStyleByNameHook = getLvglStyleByName;
     eez::flow::getLvglImageByNameHook = getLvglImageByName;
+    eez::flow::getLvglFontByNameHook = getLvglFontByName;
     eez::flow::getLvglObjectNameFromIndexHook = getLvglObjectNameFromIndex;
     eez::flow::lvglObjAddStyleHook = lvglObjAddStyle;
     eez::flow::lvglObjRemoveStyleHook = lvglObjRemoveStyle;
