@@ -224,6 +224,21 @@ EM_PORT_API(void) lvglObjSetLocalStylePropBuiltInFont(lv_obj_t *obj, lv_style_pr
     lv_obj_update_layout(obj);
 }
 
+EM_PORT_API(void) lvglSetObjStylePropBuiltInFont(lv_obj_t *obj, lv_style_t *style, lv_style_prop_t prop, int font_index) {
+    lv_style_value_t value;
+    value.ptr = BUILT_IN_FONTS[font_index];
+    lv_style_set_prop(style, prop, value);
+    lv_obj_update_layout(obj);
+}
+
+EM_PORT_API(void) lvglSetObjStylePropPtr(lv_obj_t *obj, lv_style_t *style, lv_style_prop_t prop, const void *ptr) {
+    lv_style_value_t value;
+    value.ptr = ptr;
+    lv_style_set_prop(style, prop, value);
+    lv_obj_update_layout(obj);
+}
+
+
 EM_PORT_API(lv_style_t *) lvglStyleCreate() {
 #if LVGL_VERSION_MAJOR >= 9
     lv_style_t *style = (lv_style_t *)lv_malloc(sizeof(lv_style_t));
@@ -250,7 +265,6 @@ EM_PORT_API(void) lvglSetStylePropPtr(lv_style_t *obj, lv_style_prop_t prop, con
         lv_style_value_t value;
     value.ptr = ptr;
     lv_style_set_prop(obj, prop, value);
-
 }
 
 EM_PORT_API(void) lvglSetStylePropNum(lv_style_t *obj, lv_style_prop_t prop, int32_t num) {
