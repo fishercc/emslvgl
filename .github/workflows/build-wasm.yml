@@ -49,9 +49,11 @@ jobs:
         chmod +x fix-cmake.sh
         chmod +x disable-freetype.sh
         chmod +x fix-studio-api.sh
+        chmod +x fix-eez-framework.sh
         ./fix-cmake.sh
         ./disable-freetype.sh
         ./fix-studio-api.sh
+        ./fix-eez-framework.sh
     
     - name: Build eez-runtime
       run: |
