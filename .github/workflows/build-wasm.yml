@@ -1,0 +1,183 @@
+name: Build WASM Libraries on Linux
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+env:
+  EMSCRIPTEN_VERSION: 3.1.58
+  CMAKE_VERSION: 3.28.0
+
+jobs:
+  build:
+    name: Build WASM Libraries
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup Emscripten
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: ${{ env.EMSCRIPTEN_VERSION }}
+        actions-cache-folder: emsdk-cache
+    
+    - name: Verify Emscripten installation
+      run: |
+        emcc --version
+        em++ --version
+    
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: ${{ env.CMAKE_VERSION }}
+    
+    - name: Verify CMake installation
+      run: cmake --version
+    
+    - name: Create release directory
+      run: mkdir -p release/wasm
+    
+    - name: Fix CMakeLists.txt for Linux build
+      run: |
+        chmod +x fix-cmake.sh
+        chmod +x disable-freetype.sh
+        chmod +x fix-studio-api.sh
+        ./fix-cmake.sh
+        ./disable-freetype.sh
+        ./fix-studio-api.sh
+    
+    - name: Build eez-runtime
+      run: |
+        cd eez-runtime
+        mkdir -p build
+        cd build
+        emcmake cmake ..
+        emmake make -j$(nproc)
+    
+    - name: Build lvgl-runtime v8.4.0
+      run: |
+        cd lvgl-runtime/v8.4.0
+        mkdir -p build
+        cd build
+        emcmake cmake ..
+        emmake make -j$(nproc)
+    
+    - name: Build lvgl-runtime v9.2.2
+      run: |
+        cd lvgl-runtime/v9.2.2
+        mkdir -p build
+        cd build
+        emcmake cmake ..
+        emmake make -j$(nproc)
+    
+    - name: Build lvgl-runtime v9.3.0
+      run: |
+        cd lvgl-runtime/v9.3.0
+        mkdir -p build
+        cd build
+        emcmake cmake ..
+        emmake make -j$(nproc)
+    
+    - name: Build lvgl-runtime v9.4.0
+      run: |
+        cd lvgl-runtime/v9.4.0
+        mkdir -p build
+        cd build
+        emcmake cmake ..
+        emmake make -j$(nproc)
+    
+    - name: List build artifacts
+      run: |
+        echo "=== Release directory ==="
+        ls -lh release/wasm/ || echo "No files in release/wasm"
+        
+        echo "=== eez-runtime build ==="
+        ls -lh eez-runtime/build/ || echo "No eez-runtime build"
+        
+        echo "=== lvgl-runtime v8.4.0 build ==="
+        ls -lh lvgl-runtime/v8.4.0/build/ || echo "No lvgl-runtime v8.4.0 build"
+        
+        echo "=== lvgl-runtime v9.2.2 build ==="
+        ls -lh lvgl-runtime/v9.2.2/build/ || echo "No lvgl-runtime v9.2.2 build"
+        
+        echo "=== lvgl-runtime v9.3.0 build ==="
+        ls -lh lvgl-runtime/v9.3.0/build/ || echo "No lvgl-runtime v9.3.0 build"
+        
+        echo "=== lvgl-runtime v9.4.0 build ==="
+        ls -lh lvgl-runtime/v9.4.0/build/ || echo "No lvgl-runtime v9.4.0 build"
+    
+    - name: Upload eez-runtime artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: eez-runtime-wasm
+        path: |
+          eez-runtime/build/eez_runtime.js
+          eez-runtime/build/eez_runtime.wasm
+        if-no-files-found: warn
+    
+    - name: Upload lvgl-runtime v8.4.0 artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: lvgl-runtime-v8.4.0-wasm
+        path: |
+          lvgl-runtime/v8.4.0/build/lvgl_runtime_v8.4.0.js
+          lvgl-runtime/v8.4.0/build/lvgl_runtime_v8.4.0.wasm
+        if-no-files-found: warn
+    
+    - name: Upload lvgl-runtime v9.2.2 artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: lvgl-runtime-v9.2.2-wasm
+        path: |
+          lvgl-runtime/v9.2.2/build/lvgl_runtime_v9.2.2.js
+          lvgl-runtime/v9.2.2/build/lvgl_runtime_v9.2.2.wasm
+        if-no-files-found: warn
+    
+    - name: Upload lvgl-runtime v9.3.0 artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: lvgl-runtime-v9.3.0-wasm
+        path: |
+          lvgl-runtime/v9.3.0/build/lvgl_runtime_v9.3.0.js
+          lvgl-runtime/v9.3.0/build/lvgl_runtime_v9.3.0.wasm
+        if-no-files-found: warn
+    
+    - name: Upload lvgl-runtime v9.4.0 artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: lvgl-runtime-v9.4.0-wasm
+        path: |
+          lvgl-runtime/v9.4.0/build/lvgl_runtime_v9.4.0.js
+          lvgl-runtime/v9.4.0/build/lvgl_runtime_v9.4.0.wasm
+        if-no-files-found: warn
+    
+    - name: Upload release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-wasm
+        path: release/wasm/
+        if-no-files-found: warn
+    
+    - name: Build summary
+      if: always()
+      run: |
+        echo "# Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Build Environment" >> $GITHUB_STEP_SUMMARY
+        echo "- Emscripten: ${{ env.EMSCRIPTEN_VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- CMake: ${{ env.CMAKE_VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- OS: Ubuntu Latest" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Build Status" >> $GITHUB_STEP_SUMMARY
+        echo "- eez-runtime: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- lvgl-runtime v8.4.0: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- lvgl-runtime v9.2.2: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- lvgl-runtime v9.3.0: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- lvgl-runtime v9.4.0: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY

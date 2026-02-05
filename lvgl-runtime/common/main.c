@@ -272,7 +272,7 @@ EM_PORT_API(void) lvglSetKeyboardGroup(lv_group_t *group) {
     lv_indev_set_group(keyboard_indev, group);
 }
 
-EM_PORT_API(void) hal_init(bool is_editor) {
+EM_PORT_API(void) hal_init(bool is_editor) {//主函数调用初始化屏幕函数
     // alloc memory for the display front buffer
     display_fb = (uint32_t *)malloc(sizeof(uint32_t) * hor_res * ver_res);
     memset(display_fb, 0x44, hor_res * ver_res * sizeof(uint32_t));
